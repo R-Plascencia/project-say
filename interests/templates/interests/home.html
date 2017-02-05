@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Say: Know the truth, speak the truth!</h1>
+<a class="btn btn-primary" href="{% url 'interests:create' %}">Create Interest</a>
+
+<br><br>
+
+{% for i in interests.all %}
+{{ i.title }}
+<br>
+(Created on {{ i.pub_date }})
+{% endfor %}
+
+{% endblock %}
