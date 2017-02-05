@@ -1,0 +1,24 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Log In</h1>
+{% if error %}
+{{ error }}
+{% endif %}
+<br><br>
+<form method="POST" action="{% url 'accounts:login' %}">
+  {% csrf_token %}
+  {% if request.GET.next %}
+  <input type="hidden" name="next" value={{ request.GET.next }} />
+  {% endif %}
+  Username:<br>
+  <input type="text" name="username" />
+  <br>
+  Password:<br>
+  <input type="password" name="userpass" />
+  <br><br>
+  <input class="btn btn-primary" type="submit" value="Login" />
+  <br>
+</form>
+{% endblock %}

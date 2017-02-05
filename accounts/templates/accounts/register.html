@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Register!</h1>
+{% if error %}
+{{ error }}
+{% endif %}
+<br><br>
+<form method="POST" action="{% url 'accounts:register' %}">
+  {% csrf_token %}
+  Username:<br>
+  <input type="text" name="username" />
+  <br>
+  Password:<br>
+  <input type="password" name="userpass" />
+  <br>
+  Confirm Password:<br>
+  <input type="password" name="userpass2" />
+  <br><br>
+  <input class="btn btn-primary" type="submit" value="Register!" />
+  <br>
+</form>
+
+{% endblock %}
