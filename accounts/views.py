@@ -7,12 +7,12 @@ def register(request):
     if request.method == 'POST':
         if request.POST['userpass'] == request.POST['userpass2']:
             try:
-                user = User.objects.get(username=request.POST['username'])
-                return render(request, 'accounts/register.html', {'error': 'Username already taken'})
+                user = User.objects.get(username=request.POST['email'])
+                return render(request, 'accounts/register.html', {'error': 'email already taken'})
             except User.DoesNotExist:
-                user = User.objects.create_user(request.POST['username'], password=request.POST['userpass'])
+                user = User.objects.create_user(request.POST['email'], password=request.POST['userpass'])
                 login(request, user)
-                return render(request, 'accounts/register.html')
+                return redirect('home')
         else:
             return render(request, 'accounts/register.html', {'error': 'Passwords did not match'})
     else:
@@ -20,9 +20,9 @@ def register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['userpass']
-        user = authenticate(username=username, password=password)
+        user = authenticate(username=email, password=password)
         if user is not None:
             login(request, user)
             if 'next' in request.POST:

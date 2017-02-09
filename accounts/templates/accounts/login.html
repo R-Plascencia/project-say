@@ -2,11 +2,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Log In</h1>
-{% if error %}
-{{ error }}
-{% endif %}
-<br><br>
+<!--
 <form method="POST" action="{% url 'accounts:login' %}">
   {% csrf_token %}
   {% if request.GET.next %}
@@ -19,6 +15,34 @@
   <input type="password" name="userpass" />
   <br><br>
   <input class="btn btn-primary" type="submit" value="Login" />
+  <input class="btn btn-primary btn-lg btn-block" type="submit" value="Login" />
   <br>
-</form>
+</form>-->
+<div class="wrapper">
+  <h2>Log In</h2>
+  <br><br>
+  {% if error %}
+  <span style="color:red;">{{ error }}</span>
+  {% endif %}
+  <form method="POST" action="{% url 'accounts:login' %}">
+    {% csrf_token %}
+    {% if request.GET.next %}
+    <input type="hidden" name="next" value={{ request.GET.next }} />
+    {% endif %}
+    <div class="form-group">
+      <label for="email">Email address:</label>
+      <input type="email" class="form-control" name="email">
+    </div>
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input type="password" class="form-control" name="userpass">
+    </div>
+    <!-- TODO Maybe implement later
+    <div class="checkbox">
+      <label><input type="checkbox"> Remember me</label>
+    </div> -->
+    <br>
+    <input class="btn btn-primary btn-lg btn-block" type="submit" value="Log In">
+  </form>
+</div>
 {% endblock %}
