@@ -7,4 +7,4 @@ class Interest(models.Model):
     keywords = models.TextField()
     pub_date = models.DateTimeField()
     num_of_imports = models.IntegerField(default=1)
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey(User, related_name='creator')

@@ -12,7 +12,7 @@ def create(request):
             interest = Interest()
             interest.title = request.POST['title']
             interest.keywords = request.POST['keywords']
-            interest.pub_date = timezone.datetime.now()
+            interest.pub_date = timezone.now()
             interest.creator = request.user
             interest.save()
             return redirect('home')

@@ -1,13 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Create an Interest</h1>
-
-{% if error %}
-{{ error }}
-{% endif %}
-<br><br>
-
+<!--
 <form method="POST" action="{% url 'interests:create' %}">
   {% csrf_token %}
 
@@ -20,5 +14,32 @@
   <input class="btn btn-primary" type="submit" value="Create" />
   <br>
 </form>
+-->
+
+<div class="wrapper">
+  <h2>Create an Interest</h2>
+  <br>
+  {% if error %}
+  <span style="color:red;">{{ error }}</span>
+  {% endif %}
+  <br>
+  <form method="POST" action="{% url 'interests:create' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="title">Title:</label>
+      <input type="text" class="form-control" name="title">
+    </div>
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="keywords">Keywords (Maximum of 4):</label>
+        <input type="text" class="form-control" aria-describedby="keyword-helptext" name="keywords">
+        <p id="keyword-helptext" class="form-text text-muted">
+          Keywords must be comma-separated
+        </p>
+      </div>
+      <br>
+      <input class="btn btn-primary btn-success btn-lg btn-block" type="submit" value="+ Create">
+    </form>
+</div>
 
 {% endblock %}
