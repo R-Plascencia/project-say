@@ -34,6 +34,7 @@
         <div class="collapse navbar-collapse" id="mynav">
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
+            <li><a href="{% url 'interests:list' %}">Interests</a></li>
             <li><a href="#" onClick="document.getElementById('logout-form').submit()">Logout</a></li>
             <form id="logout-form" method="POST" action="{% url 'accounts:logout' %}">
               {% csrf_token %}
