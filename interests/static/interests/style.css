@@ -2,3 +2,7 @@
   margin: auto;
 	width: 65%;
 }
+
+p.jumbo {
+  font-family: helvetica, sans-serif;
+}

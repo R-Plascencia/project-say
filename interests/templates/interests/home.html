@@ -1,18 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-<br>
-<h2>Say: Read the truth, Know the truth</h2>
-<a class="btn btn-primary" href="{% url 'interests:create' %}">+ Create Interest</a>
-<br><br>
+{% load static %}
 
+<br>
+<!--<h2> ... </h2>-->
+<br>
 {% if user.is_authenticated %}
-  {% for i in interests.all %}
-    {% if  i.creator == request.user %}
-      {{ i.title }} (Created on {{ i.pub_date }})
+  <a class="btn btn-primary" href="{% url 'interests:create' %}">+ Create Interest</a>
+  <br><br>
+  {% for u_interest in user.profile.interests.all %}
+    {% if u_interest.creator == request.user %}
+      {{ u_interest.title }} (Created on {{ u_interest.pub_date }})<br>
+    {% else %}
+      {{ u_interest.title }} <br>
     {% endif %}
   {% endfor %}
 {% else %}
-    Not logged in.
+  <div class="jumbotron">
+  <h2>Say: Read the truth, Know the truth</h2>
+  <br>
+  <p class="jumbo">In today's politics, it can be hard to know if the news you're reading is fact or fiction.
+  That's where we come in! Create an Interest with a few related keywords of what you're
+  'interested' in, and you'll get back news articles from reputable and respected sources! No sifting, wading, or
+  searching necessary. And most importantly, no lies.</p>
+  <br>
+  <p><a class="btn btn-primary btn-lg" href="{% url 'accounts:register' %}" role="button">Get Started!</a></p>
+  </div>
 {% endif %}
 
 {% endblock %}

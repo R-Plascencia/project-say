@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import Interest
 from django.contrib.auth.models import User
+from accounts.models import UserProfile
 
 # Create your views here.
 @login_required
@@ -15,6 +16,7 @@ def create(request):
             interest.pub_date = timezone.now()
             interest.creator = request.user
             interest.save()
+            request.user.profile.interests.add(interest)
             return redirect('home')
         else:
             return render(request, 'interests/create.html', {'error':'ERROR: Interest must have a title and maximum of 4 keywords'})
@@ -24,3 +26,17 @@ def create(request):
 def home(request):
     interests = Interest.objects.order_by('pub_date')
     return render(request, 'interests/home.html', {'interests':interests})
+
+def list(request):
+    interests = Interest.objects.order_by('title')
+    return render(request, 'interests/list.html', {'interests':interests})
+
+def copy(request, pk):
+    if request.method == 'POST':
+        interest = Interest.objects.get(pk=pk)
+        interest.num_of_imports += 1
+        interest.save()
+        u = request.user
+        u.profile.interests.add(interest)
+        u.profile.save()
+        return redirect('home')

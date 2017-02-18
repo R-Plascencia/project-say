@@ -1,0 +1,15 @@
+<!-- List of all interests created by users with sorting options on Title, Created by date, and number of Imports by other users -->
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<br><br>
+{% for i in interests.all %}
+<form method="POST" action="{% url 'interests:copy' i.id %}">
+  {% csrf_token %}
+  {{ i.title }} <br>Created on {{ i.pub_date_pretty }} | Imported {{ i.num_of_imports }} times
+  <input type="submit" value="Import">
+  <br><br>
+</form>
+{% endfor %}
+{% endblock %}

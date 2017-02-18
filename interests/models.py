@@ -8,3 +8,9 @@ class Interest(models.Model):
     pub_date = models.DateTimeField()
     num_of_imports = models.IntegerField(default=1)
     creator = models.ForeignKey(User, related_name='creator')
+
+    def __str__(self):
+        return self.title
+
+    def pub_date_pretty(self):
+        return self.pub_date.strftime('%b %e %Y')
