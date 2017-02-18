@@ -2,27 +2,12 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!--
-<form method="POST" action="{% url 'accounts:login' %}">
-  {% csrf_token %}
-  {% if request.GET.next %}
-  <input type="hidden" name="next" value={{ request.GET.next }} />
-  {% endif %}
-  Username:<br>
-  <input type="text" name="username" />
-  <br>
-  Password:<br>
-  <input type="password" name="userpass" />
-  <br><br>
-  <input class="btn btn-primary" type="submit" value="Login" />
-  <input class="btn btn-primary btn-lg btn-block" type="submit" value="Login" />
-  <br>
-</form>-->
 <div class="wrapper">
   <h2>Log In</h2>
+  If you have not created an account be sure to <a href="{% url 'accounts:register' %}">sign up!</a>
   <br><br>
   {% if error %}
-  <span style="color:red;">{{ error }}</span>
+  <div class="alert alert-danger" role="alert">{{ error }}</div>
   {% endif %}
   <form method="POST" action="{% url 'accounts:login' %}">
     {% csrf_token %}

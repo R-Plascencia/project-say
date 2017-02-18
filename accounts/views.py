@@ -8,13 +8,13 @@ def register(request):
         if request.POST['userpass'] == request.POST['userpass2']:
             try:
                 user = User.objects.get(username=request.POST['email'])
-                return render(request, 'accounts/register.html', {'error': 'email already taken'})
+                return render(request, 'accounts/register.html', {'error': 'The email you entered is already taken.'})
             except User.DoesNotExist:
                 user = User.objects.create_user(request.POST['email'], password=request.POST['userpass'])
                 login(request, user)
                 return redirect('home')
         else:
-            return render(request, 'accounts/register.html', {'error': 'Passwords did not match'})
+            return render(request, 'accounts/register.html', {'error': 'Passwords did not match.'})
     else:
         return render(request, 'accounts/register.html')
 
@@ -30,7 +30,7 @@ def user_login(request):
                     return redirect(request.POST['next'])
             return redirect('home')
         else:
-            return render(request, 'accounts/login.html', {'error': 'Login information is incorrect'})
+            return render(request, 'accounts/login.html', {'error': 'Login information is incorrect.'})
     else:
         return render(request, 'accounts/login.html')
 
