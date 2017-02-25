@@ -9,12 +9,20 @@
   <a class="btn btn-primary" href="{% url 'interests:create' %}">+ Create Interest</a>
   <br><br>
   {% for u_interest in user.profile.interests.all %}
+
     {% if u_interest.creator == request.user %}
-      {{ u_interest.title }} (Created on {{ u_interest.pub_date }})<br>
-    {% else %}
-      {{ u_interest.title }} <br>
+      {{ u_interest }} (Created on {{ u_interest.pub_date }})<br>
+      {% if u_interest.newsresults.newsitems.all %}
+        {% for r in u_interest.newsresults.newsitems.all %}<br>
+          <a href={{r.link}}>{{ r }}</a>
+        {% endfor %}
+      {% else %}
+        <i>No results found</i> <br>
+      {% endif %}
     {% endif %}
+    <hr>
   {% endfor %}
+
 {% else %}
   <div class="jumbotron">
   <h2>Say: Read the truth, Know the truth</h2>
