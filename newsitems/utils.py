@@ -11,12 +11,19 @@ rss_sources = {'AP': 'http://hosted2.ap.org/atom/APDEFAULT/89ae8247abe8493fae244
     'Reuters - Domestic': 'http://feeds.reuters.com/Reuters/domesticNews',
     'The Economist - United States': 'http://www.economist.com/sections/united-states/rss.xml',
     'The Economist - Economics': 'http://www.economist.com/sections/economics/rss.xml',
-    'Financial Times - US': 'http://www.ft.com/rss/world/us',
-    'Financial Times - US&CAN Politics': 'http://www.ft.com/rss/world/us/politics',
+    # 'Financial Times - US': 'http://www.ft.com/rss/world/us',
+    # 'Financial Times - US&CAN Politics': 'http://www.ft.com/rss/world/us/politics',
     'The Independent': 'http://www.independent.co.uk/news/world/americas/rss',
-    'BBC': 'http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml'
+    'BBC': 'http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml',
+    'WSJ': 'http://www.wsj.com/xml/rss/3_7085.xml'
 }
 
+'''
+Helper function that takes all the sources and RSS links in the rss_sources dictionary and
+creates a new dictionary with the source and its parsed data
+
+Returns: parsed_feeds - dictionary
+'''
 def parse_rss_sources():
     parsed_feeds = dict()
     for source,link in rss_sources.items():
@@ -24,6 +31,14 @@ def parse_rss_sources():
         parsed_feeds.update({source: feed.entries})
     return parsed_feeds
 
+'''
+Called from the Interest:Create view (for now). Takes the interest's keywords and searches each
+RSS source for word matches in their titles and desctiptions. If match is found, create NewsItem
+with the article's information and add to the 'results' dictionary. This will then be attached
+to the Interest's news results
+
+Returns: results - dictionary
+'''
 def build_results(request, interest):
     results = NewsResult(interest=interest)
     result_found = False
@@ -47,12 +62,12 @@ def build_results(request, interest):
             # Search for the associated Interest keywords in the desctiptions and titles of every story
             for word in keywords:
                 word = word.lower()
-                # If something is found
+                # If something is found, raise the flag
                 if re.search(r'\b' + word + r'\b', description.lower()) or re.search(r'\b' + word + r'\b', title.lower()):
                     # print('{0} found'.format(word))
                     result_found = True
 
-            # Before moving on to next thing, create a news item and add it to the results
+            # Before moving on to next thing, create a news item and add it to the results then reset flag
             if result_found:
                 news_item = NewsItem()
                 news_item.title = title
