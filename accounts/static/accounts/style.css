@@ -3,3 +3,10 @@
   margin: auto;
 	width: 65%;
 }
+
+.refresh-button {
+  padding-left:10px;
+  padding-right:5px;
+  cursor:pointer;
+  color: green;
+}
