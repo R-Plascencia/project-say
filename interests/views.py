@@ -6,20 +6,9 @@ from django.contrib.auth.models import User
 from accounts.models import UserProfile
 from django.template.defaulttags import register
 from newsitems.utils import build_results
+from newsitems.models import NewsResult
 import feedparser
 import re
-
-# Dictionary of all allowed RSS sources of news
-# rss_sources = {'AP': 'http://hosted2.ap.org/atom/APDEFAULT/89ae8247abe8493fae24405546e9a1aa',
-#     'Reuters - Politics': 'http://feeds.reuters.com/Reuters/PoliticsNews',
-#     'Reuters - Domestic': 'http://feeds.reuters.com/Reuters/domesticNews',
-#     'The Economist - United States': 'http://www.economist.com/sections/united-states/rss.xml',
-#     'The Economist - Economics': 'http://www.economist.com/sections/economics/rss.xml',
-#     'Financial Times - US': 'http://www.ft.com/rss/world/us',
-#     'Financial Times - US&CAN Politics': 'http://www.ft.com/rss/world/us/politics',
-#     'The Independent': 'http://www.independent.co.uk/news/world/americas/rss',
-#     'BBC': 'http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml'
-# }
 
 # Create your views here.
 @login_required
@@ -38,8 +27,15 @@ def create(request):
         else:
             return render(request, 'interests/create.html', {'error':'ERROR: Interest must have a title and maximum of 4 keywords'})
     else:
-        print("WHY ARE WE HERE")
         return render(request, 'interests/create.html')
+
+def refresh(request, pk):
+    if request.method == 'POST':
+        # request.user.profile.interests.newsresults.newsitems.all.delete()
+        interest = Interest.objects.get(pk=pk)
+        NewsResult.objects.filter(interest__id=pk).delete()
+        results = build_results(request, interest)
+        return redirect('home')
 
 def home(request):
     if request.user.is_anonymous():
@@ -48,9 +44,27 @@ def home(request):
         interests = request.user.profile.interests
         return render(request, 'interests/home.html', {'interests': interests})
 
+def search(request):
+    search_query = request.GET.get('searchtitle')
+    search_result = Interest.objects.filter(title__contains=search_query).order_by('num_of_imports')
+    return render(request, 'interests/list.html', {'search_result':search_result, 'searchtitle':search_query, 'order_by': 'num_of_imports'})
+
 def list(request):
-    interests = Interest.objects.order_by('title')
-    return render(request, 'interests/list.html', {'interests':interests})
+    order_by = request.GET.get('order_by', 'num_of_imports')
+    first_time = False
+    if request.GET.get('sort'):
+        sort_type = request.GET.get('sort')
+    else:
+        first_time = True
+        sort_type = 'ascending'
+
+    if sort_type == 'ascending':
+        interests = Interest.objects.order_by('-' + order_by)
+        if not first_time: sort_type = 'descending'
+    else:
+        interests = Interest.objects.order_by(order_by)
+        sort_type = 'ascending'
+    return render(request, 'interests/list.html', {'interests':interests, 'sort_type':sort_type, 'order_by':order_by})
 
 def copy(request, pk):
     if request.method == 'POST':

@@ -1,15 +1,132 @@
-<!-- List of all interests created by users with sorting options on Title, Created by date, and number of Imports by other users -->
+<!-- List of all interests created by users with sorting options on Title, and number of Imports by other users -->
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
 
-<br><br>
-{% for i in interests.all %}
-<form method="POST" action="{% url 'interests:copy' i.id %}">
-  {% csrf_token %}
-  {{ i.title }} <br>Created on {{ i.pub_date_pretty }} | Imported {{ i.num_of_imports }} times
-  <input type="submit" value="Import">
-  <br><br>
+<br>
+<h3>Interests created by the Say community</h3>
+
+<br>
+<form action="{% url 'interests:search' %}">
+  <div class="form-group" style="width:30%;">
+    <div class="input-group">
+      {% if searchtitle %}
+        <input type="text" class="form-control" name="searchtitle" value="{{searchtitle}}">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+        <!-- <span class="input-group-btn">
+          <button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+        </span> -->
+      {% else %}
+        <input type="text" class="form-control" name="searchtitle" placeholder="Search for Interests">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+        </span>
+      {% endif %}
+    </div>
+  </div>
 </form>
-{% endfor %}
+<br>
+
+<table class="table table-striped table-hover ">
+<thead>
+  <tr>
+    <th><!--   -->
+      <a href="?order_by=num_of_imports&sort={{sort_type}}" style="text-decoration: none; color:black;">Imported
+      {% if order_by == 'num_of_imports' %}
+        {% if sort_type == 'ascending' %}
+          <span class="glyphicon glyphicon-chevron-up"></span>
+        {% elif sort_type == 'descending' %}
+          <span class="glyphicon glyphicon-chevron-down"></span>
+        {% endif %}
+      {% endif %}
+      </a>
+    </th>
+    <th><!--   -->
+      <a href="?order_by=title&sort={{sort_type}}" style="text-decoration: none; color:black;">Title
+      {% if order_by == 'title' %}
+        {% if sort_type == 'ascending' %}
+          <span class="glyphicon glyphicon-chevron-up"></span>
+        {% elif sort_type == 'descending' %}
+          <span class="glyphicon glyphicon-chevron-down"></span>
+        {% endif %}
+      {% endif %}
+      </a>
+    </th>
+    <th><!--   -->
+      <a href="?order_by=pub_date&sort={{sort_type}}" style="text-decoration: none; color: black;">Date Created
+      {% if order_by == 'pub_date' %}
+        {% if sort_type == 'ascending' %}
+          <span class="glyphicon glyphicon-chevron-up"></span>
+        {% elif sort_type == 'descending' %}
+          <span class="glyphicon glyphicon-chevron-down"></span>
+        {% endif %}
+      {% endif %}
+      </a>
+    </th>
+  </tr>
+</thead>
+<tbody>
+
+{% if search_result %}
+  {% for i in search_result.all %}
+    <form method="POST" action="{% url 'interests:copy' i.id %}">
+      {% csrf_token %}
+        <tr>
+          <td>
+            {{ i.num_of_imports }}
+            {% if i.num_of_imports > 1 %}
+              times
+            {% else %}
+              time
+            {% endif %}
+          </td>
+          <td>
+            {{ i.title }}
+          </td>
+          <td>
+            {{ i.pub_date_pretty }}
+          </td>
+          <td>
+            <button type="submit" class="btn btn-primary btn-xs">
+               <span class="glyphicon glyphicon-import"></span> Import
+            </button>
+            <!-- <input type="submit" value="Import"> -->
+          </td>
+    </form>
+  {% endfor %}
+{% else %}
+  {% for i in interests.all %}
+  <form method="POST" action="{% url 'interests:copy' i.id %}">
+    {% csrf_token %}
+      <tr>
+        <td>
+          {{ i.num_of_imports }}
+          {% if i.num_of_imports > 1 %}
+            times
+          {% else %}
+            time
+          {% endif %}
+        </td>
+        <td>
+          {{ i.title }}
+        </td>
+        <td>
+          {{ i.pub_date_pretty }}
+        </td>
+        <td>
+          <button type="submit" class="btn btn-primary btn-xs">
+             <span class="glyphicon glyphicon-import"></span> Import
+          </button>
+          <!-- <input type="submit" value="Import"> -->
+        </td>
+  </form>
+  {% endfor %}
+{% endif %}
+
+  </tbody>
+</table>
+
+
 {% endblock %}

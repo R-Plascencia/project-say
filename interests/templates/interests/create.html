@@ -1,21 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<!--
-<form method="POST" action="{% url 'interests:create' %}">
-  {% csrf_token %}
-
-  Title:<br>
-  <input type="text" name="title" />
-  <br><br>
-  Keywords (4 maximum, comma separated):<br>
-  <input type="text" name="keywords" />
-  <br><br>
-  <input class="btn btn-primary" type="submit" value="Create" />
-  <br>
-</form>
--->
-
 <div class="wrapper">
   <h2>Create an Interest</h2>
   <br>
@@ -38,7 +23,10 @@
         </p>
       </div>
       <br>
-      <input class="btn btn-primary btn-success btn-lg btn-block" type="submit" value="+ Create">
+      <button type="submit" class="btn btn-primary btn-success btn-lg btn-block">
+        <span class="glyphicon glyphicon-plus"></span> Create
+      </button>
+      <!-- <input class="btn btn-primary btn-success btn-lg btn-block" type="submit" value="+ Create"> -->
     </form>
 </div>
 

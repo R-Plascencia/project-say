@@ -6,12 +6,22 @@
 <!--<h2> ... </h2>-->
 <br>
 {% if user.is_authenticated %}
-  <a class="btn btn-primary" href="{% url 'interests:create' %}">+ Create Interest</a>
+  <a class="btn btn-primary" href="{% url 'interests:create' %}"><span class="glyphicon glyphicon-plus"></span> Create Interest</a>
   <br><br>
   {% for u_interest in user.profile.interests.all %}
 
     {% if u_interest.creator == request.user %}
-      {{ u_interest }} (Created on {{ u_interest.pub_date }})<br>
+      {{ u_interest }}<a class="refresh-button" onClick="document.getElementById('refresh-form').submit()" title="Refresh results"><span class="glyphicon glyphicon-refresh"></span></a>
+      <form id="refresh-form" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
+        {% csrf_token %}
+        <input type="hidden" value="refresh">
+      </form>
+      <h6>
+        <span class="text-muted">
+          <span class="glyphicon glyphicon-time"></span>
+          Created on {{ u_interest.pub_date }}
+        </span>
+      </h6>
       {% if u_interest.newsresults.newsitems.all %}
         {% for r in u_interest.newsresults.newsitems.all %}<br>
           <a href={{r.link}}>{{ r }}</a>
