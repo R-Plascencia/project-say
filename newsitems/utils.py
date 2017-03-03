@@ -1,6 +1,7 @@
 from interests.models import Interest
 from .models import NewsItem
 from .models import NewsResult
+from django.utils import timezone
 import feedparser
 import re
 
@@ -11,11 +12,10 @@ rss_sources = {'AP': 'http://hosted2.ap.org/atom/APDEFAULT/89ae8247abe8493fae244
     'Reuters - Domestic': 'http://feeds.reuters.com/Reuters/domesticNews',
     'The Economist - United States': 'http://www.economist.com/sections/united-states/rss.xml',
     'The Economist - Economics': 'http://www.economist.com/sections/economics/rss.xml',
-    # 'Financial Times - US': 'http://www.ft.com/rss/world/us',
-    # 'Financial Times - US&CAN Politics': 'http://www.ft.com/rss/world/us/politics',
     'The Independent': 'http://www.independent.co.uk/news/world/americas/rss',
     'BBC': 'http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml',
-    'WSJ': 'http://www.wsj.com/xml/rss/3_7085.xml'
+    'WSJ': 'http://www.wsj.com/xml/rss/3_7085.xml',
+    'Amnesty International': 'http://www.amnestyusa.org/rss/news/Americas/rss.xml'
 }
 
 '''
@@ -69,6 +69,8 @@ def build_results(request, interest):
 
             # Before moving on to next thing, create a news item and add it to the results then reset flag
             if result_found:
+                interest.last_refreshed = timezone.now()
+                interest.save()
                 news_item = NewsItem()
                 news_item.title = title
                 news_item.link = link
