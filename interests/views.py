@@ -16,9 +16,18 @@ def create(request):
     if request.method == 'POST':
         if request.POST['title'] and request.POST['keywords']:
             interest = Interest()
-            interest.title = request.POST['title']
+            # Make titles pretty: capitalize first letter of each word
+            title = request.POST['title'].split(' ')
+            i = 0
+            for word in title:
+                letter = word[:1].upper()
+                new_item = word.replace(word[:1], letter, 1)
+                title[i] = new_item
+                i += 1
+            interest.title = ' '.join(title)
             interest.keywords = request.POST['keywords']
             interest.pub_date = timezone.now()
+            interest.last_refreshed = timezone.now()
             interest.creator = request.user
             interest.save()
             request.user.profile.interests.add(interest)

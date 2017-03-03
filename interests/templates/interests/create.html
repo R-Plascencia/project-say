@@ -1,29 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-
+{% load static %}
+<script src="{% static 'accounts/create_eval.js' %}" type="text/javascript"></script>
 <div class="wrapper">
   <h2>Create an Interest</h2>
   <br>
-  {% if error %}
-  <span style="color:red;">{{ error }}</span>
-  {% endif %}
-  <br>
+  <span style="color:red;" id="errormessage">
+    {% if error %}
+      {{ error }}
+    {% endif %}
+  </span>
+  <br><br>
   <form method="POST" action="{% url 'interests:create' %}">
     {% csrf_token %}
-    <div class="form-group">
+    <div class="form-group" id="title_div">
       <label for="title">Title:</label>
-      <input type="text" class="form-control" name="title">
+      <input type="text" class="form-control" name="title" id="title">
     </div>
     <form class="form-inline">
-      <div class="form-group">
+      <div class="form-group" id="keywords_div">
         <label for="keywords">Keywords (Maximum of 4):</label>
-        <input type="text" class="form-control" aria-describedby="keyword-helptext" name="keywords">
+        <input type="text" class="form-control" aria-describedby="keyword-helptext" name="keywords" id="keywords">
         <p id="keyword-helptext" class="form-text text-muted">
-          Keywords must be comma-separated
+          Keywords and key phrases must be comma-separated
+          <a href="#" title="Help">
+            <span class="glyphicon glyphicon-question-sign"></span>
+          </a>
         </p>
       </div>
       <br>
-      <button type="submit" class="btn btn-primary btn-success btn-lg btn-block">
+      <button type="submit" class="btn btn-primary btn-success btn-lg btn-block" id="createbutton">
         <span class="glyphicon glyphicon-plus"></span> Create
       </button>
       <!-- <input class="btn btn-primary btn-success btn-lg btn-block" type="submit" value="+ Create"> -->

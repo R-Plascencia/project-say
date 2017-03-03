@@ -6,12 +6,16 @@
 <!--<h2> ... </h2>-->
 <br>
 {% if user.is_authenticated %}
-  <a class="btn btn-primary" href="{% url 'interests:create' %}"><span class="glyphicon glyphicon-plus"></span> Create Interest</a>
+  <a class="btn btn-primary btn-success" href="{% url 'interests:create' %}"><span class="glyphicon glyphicon-plus"></span> Create Interest</a>
+  <!-- <button  type="button">Open Overlay</button> -->
   <br><br>
   {% for u_interest in user.profile.interests.all %}
 
     {% if u_interest.creator == request.user %}
-      {{ u_interest }}<a class="refresh-button" onClick="document.getElementById('refresh-form').submit()" title="Refresh results"><span class="glyphicon glyphicon-refresh"></span></a>
+      {{ u_interest }}
+      <a class="refresh-button" onClick="document.getElementById('refresh-form').submit()" title="Update results" id="trigger-overlay">
+        <span class="glyphicon glyphicon-refresh"></span>
+      </a>
       <form id="refresh-form" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
         {% csrf_token %}
         <input type="hidden" value="refresh">
@@ -19,7 +23,7 @@
       <h6>
         <span class="text-muted">
           <span class="glyphicon glyphicon-time"></span>
-          Created on {{ u_interest.pub_date }}
+          Updated on {{ u_interest.last_refreshed }}
         </span>
       </h6>
       {% if u_interest.newsresults.newsitems.all %}
@@ -35,15 +39,33 @@
 
 {% else %}
   <div class="jumbotron">
-  <h2>Say: Read the truth, Know the truth</h2>
+  <h2>Say: Your Truthful News Fetcher</h2>
   <br>
-  <p class="jumbo">In today's politics, it can be hard to know if the news you're reading is fact or fiction.
-  That's where we come in! Create an Interest with a few related keywords of what you're
+  <p class="jumbo">In today's politics, it can sometimes be hard to know if the news you're reading is reliable.
+  That's where Say comes in! Create an Interest with a few related keywords of what you're
   'interested' in, and you'll get back news articles from reputable and respected sources! No sifting, wading, or
-  searching necessary. And most importantly, no lies.</p>
+  searching necessary.</p>
   <br>
   <p><a class="btn btn-primary btn-lg" href="{% url 'accounts:register' %}" role="button">Get Started!</a></p>
   </div>
 {% endif %}
+
+<div class="overlay overlay-scale">
+  <div class="panel panel-info centered" style="width:50%;">
+    <div class="panel-heading">
+      <h4>
+        <center>Fetching Knowledge...</center>
+      </h4>
+    </div>
+    <div class="panel-body">
+      <div class="progress progress-striped active">
+        <div class="progress-bar" style="width: 100%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{% static 'accounts/classie.js' %}" type="text/javascript"></script>
+<script src="{% static 'accounts/modernizr.custom.js' %}" type="text/javascript"></script>
+<script src="{% static 'accounts/demo1.js' %}" type="text/javascript"></script>
 
 {% endblock %}
