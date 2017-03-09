@@ -24,9 +24,9 @@ window.onload = function(){
   //input changed event
   keywords.oninput = function(){
     // If keyword field is blank
-    if(this.value == ''){
-      $('#createbutton').prop('disabled', true);
-    }
+    // if(this.value == ''){
+    //   $('#createbutton').prop('disabled', true);
+    // }
 
     // There's more than 4 keywords entered
     if(this.value.split(',').length > 4){
