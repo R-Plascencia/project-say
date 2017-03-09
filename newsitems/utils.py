@@ -42,9 +42,11 @@ Returns: results - dictionary
 def build_results(request, interest):
     results = NewsResult(interest=interest)
     result_found = False
+    enough_matches = False
 
     # Get the keywords associated with Interest
     keywords = interest.keywords.split(',')
+    keyword_count = len(keywords)
 
     # Bring in the parsed feeds from each RSS source
     knowledge_sources = parse_rss_sources()
@@ -60,15 +62,22 @@ def build_results(request, interest):
             link = story.link
 
             # Search for the associated Interest keywords in the desctiptions and titles of every story
+            matches = 0
             for word in keywords:
                 word = word.lower()
                 # If something is found, raise the flag
                 if re.search(r'\b' + word + r'\b', description.lower()) or re.search(r'\b' + word + r'\b', title.lower()):
                     # print('{0} found'.format(word))
                     result_found = True
+                    matches += 1
 
-            # Before moving on to next thing, create a news item and add it to the results then reset flag
-            if result_found:
+            if keyword_count > 1:
+                if matches >= 2: enough_matches = True
+            else:
+                if matches == 1: enough_matches = True
+
+            # Before moving on to next thing, create a news item and add it to the results then reset flags
+            if result_found and enough_matches:
                 interest.last_refreshed = timezone.now()
                 interest.save()
                 news_item = NewsItem()
@@ -81,4 +90,5 @@ def build_results(request, interest):
                 results.newsitems.add(news_item)
                 results.save()
                 result_found = False
+                enough_matches = False
     return results
