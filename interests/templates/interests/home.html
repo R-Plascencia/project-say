@@ -3,29 +3,53 @@
 {% load static %}
 
 <br>
-<!--<h2> ... </h2>-->
 <br>
-{% if user.is_authenticated %}
-  <a class="btn btn-primary btn-success" href="{% url 'interests:create' %}"><span class="glyphicon glyphicon-plus"></span> Create Interest</a>
-  <!-- <button  type="button">Open Overlay</button> -->
-  <br><br>
-  {% for u_interest in user.profile.interests.all %}
 
-    {% if u_interest.creator == request.user %}
-      {{ u_interest }}
-      <a class="refresh-button" onClick="document.getElementById('refresh-form').submit()" title="Update results" id="trigger-overlay">
-        <span class="glyphicon glyphicon-refresh"></span>
-      </a>
-      <form id="refresh-form" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
-        {% csrf_token %}
-        <input type="hidden" value="refresh">
-      </form>
+{% if user.is_authenticated %}
+  <a class="btn btn-primary btn-success" href="{% url 'interests:create' %}">
+    <span class="glyphicon glyphicon-plus"></span> Create Interest
+  </a>
+  <br><br>
+
+  {% for u_interest in user.profile.interests.all %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+
+      <div class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+          <b>{{ u_interest }}</b> <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+              <a class="refresh-button" onClick="document.getElementById('refresh-form').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
+                <span class="glyphicon glyphicon-refresh" style="color:green;"></span> Refresh
+              </a>
+              <form id="refresh-form" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
+                {% csrf_token %}
+                <input type="hidden" value="refresh">
+              </form>
+            </li>
+            <li>
+              <a href="#" class="deletebtn" onClick="document.getElementById('delete-form').submit()" title="Delete Interest">
+                <span class="glyphicon glyphicon-minus-sign" style="color:red;"></span> Delete
+              </a>
+              <form id="delete-form" method="POST" action="{% url 'interests:remove' u_interest.id %}">
+                {% csrf_token %}
+                <input type="hidden" value="delete">
+              </form>
+            </li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="panel-body">
       <h6>
         <span class="text-muted">
           <span class="glyphicon glyphicon-time"></span>
           Updated on {{ u_interest.last_refreshed }}
         </span>
       </h6>
+      
       {% if u_interest.newsresults.newsitems.all %}
         {% for r in u_interest.newsresults.newsitems.all %}<br>
           <a href={{r.link}}>{{ r }}</a>
@@ -33,8 +57,9 @@
       {% else %}
         <i>No results found</i> <br>
       {% endif %}
-    {% endif %}
-    <hr>
+    </div><!-- END PANEL BODY -->
+  </div><!-- END PANEL -->
+
   {% endfor %}
 
 {% else %}
@@ -50,22 +75,23 @@
   </div>
 {% endif %}
 
-<div class="overlay overlay-scale">
-  <div class="panel panel-info centered" style="width:50%;">
-    <div class="panel-heading">
-      <h4>
-        <center>Fetching Knowledge...</center>
-      </h4>
-    </div>
-    <div class="panel-body">
-      <div class="progress progress-striped active">
-        <div class="progress-bar" style="width: 100%"></div>
+
+<div id="fetchingModal" class="modal fade">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><center>Fetching Knowledge...</center></h4>
       </div>
+      <div class="modal-body">
+        <div class="progress progress-striped active">
+          <div class="progress-bar progress-bar-info" style="width: 100%"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
-<script src="{% static 'accounts/classie.js' %}" type="text/javascript"></script>
-<script src="{% static 'accounts/modernizr.custom.js' %}" type="text/javascript"></script>
-<script src="{% static 'accounts/demo1.js' %}" type="text/javascript"></script>
 
 {% endblock %}

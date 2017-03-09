@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^list/', views.list, name="list"),
     url(r'^(?P<pk>[0-9]+)/copy', views.copy, name="copy"),
     url(r'^(?P<pk>[0-9]+)/refresh', views.refresh, name="refresh"),
+    url(r'^(?P<pk>[0-9]+)/remove', views.remove, name="remove"),
     url(r'^search/', views.search, name="search"),
 ]

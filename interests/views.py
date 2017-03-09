@@ -7,8 +7,6 @@ from accounts.models import UserProfile
 from django.template.defaulttags import register
 from newsitems.utils import build_results
 from newsitems.models import NewsResult
-import feedparser
-import re
 
 # Create your views here.
 @login_required
@@ -34,7 +32,7 @@ def create(request):
             results = build_results(request, interest)
             return redirect('home')
         else:
-            return render(request, 'interests/create.html', {'error':'ERROR: Interest must have a title and maximum of 4 keywords'})
+            return render(request, 'interests/create.html', {'error':'Interest must have a title and maximum of 4 keywords'})
     else:
         return render(request, 'interests/create.html')
 
@@ -84,3 +82,10 @@ def copy(request, pk):
         u.profile.interests.add(interest)
         u.profile.save()
         return redirect('home')
+
+def remove(request, pk):
+    if request.method == 'POST':
+        interest = Interest.objects.get(pk=pk)
+        request.user.profile.interests.remove(interest)
+        interest.delete()
+        return render(request, 'interests/home.html')
