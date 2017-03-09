@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Say: Read the truth, Know the truth</title>
+    <title>Say: Your Truthful Knowledge Fetcher</title>
 
     <!-- Bootstrap -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
@@ -19,8 +19,11 @@
     <![endif]-->
     {% load static %}
     <link rel="stylesheet " href="{% static 'accounts/style.css' %}">
-    <link rel="stylesheet " href="{% static 'accounts/normalize.css' %}">
-    <link rel="stylesheet " href="{% static 'accounts/style5.css' %}">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </head>
   <body>
     <nav class="navbar navbar-default">
@@ -29,25 +32,44 @@
           <a class="navbar-brand" href="{% url 'home' %}">
             <img alt="Brand" src="{% static 'interests/s-placeholder.png' %}" style="height: 75px; width: 75px;">
           </a>
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynav">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mynav">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
         </div>
         <div class="collapse navbar-collapse" id="mynav">
-          <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
-            <li><a href="{% url 'interests:list' %}">Interests</a></li>
-            <li><a href="#" onClick="document.getElementById('logout-form').submit()">Logout</a></li>
-            <form id="logout-form" method="POST" action="{% url 'accounts:logout' %}">
-              {% csrf_token %}
-              <input type="hidden" value="Logout">
-            </form>
-            {% else %}
-            <li><a href="{% url 'accounts:register' %}">Sign Up!</a></li>
-            <li><a href="{% url 'accounts:login' %}">Log In</a></li>
-            {% endif %}
+          {% if user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                  <span class="glyphicon glyphicon-user" style="padding-right:3px;"></span>
+                   Hi, {{ user.get_short_name }}
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                  <li class="divider"></li>
+                  <li>
+                    <a href="#" onClick="document.getElementById('logout-form').submit()">Logout</a>
+                  </li>
+                  <form id="logout-form" method="POST" action="{% url 'accounts:logout' %}">
+                    {% csrf_token %}
+                    <input type="hidden" value="Logout">
+                  </form>
+                  <li class="divider"></li>
+                </ul>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-left">
+              <li><a href="#">About</a></li>
+              <li><a href="{% url 'interests:list' %}">Interests</a></li>
+            </ul>
+          {% else %}
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="{% url 'accounts:register' %}">Sign Up!</a></li>
+                <li><a href="{% url 'accounts:login' %}">Log In</a></li>
+              </ul>
+          {% endif %}
           </ul>
         </div>
       </div>
@@ -59,10 +81,5 @@
       {% block content %}
       {% endblock %}
     </div>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </body>
 </html>
