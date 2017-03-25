@@ -4,7 +4,7 @@ from interests.models import Interest
 # Create your models here.
 class NewsItem(models.Model):
     title = models.CharField(max_length=100)
-    descr = models.TextField()
+    description = models.TextField()
     link = models.URLField(max_length=300)
     top_img = models.URLField(max_length=300, default='')
     source = models.CharField(max_length=40, default='N/A')

@@ -5,8 +5,6 @@ from django.utils import timezone
 from django.utils.html import strip_tags
 from newspaper import Article
 import feedparser
-import re
-
 
 
 # Dictionary of all allowed RSS sources of news
@@ -149,6 +147,7 @@ cachedStopWords = [
 'should',
 'would',
 'now',
+'whether',
 '-',
 ]
 
@@ -176,20 +175,21 @@ Returns: results - dictionary
 def build_results(request, interest):
     results = NewsResult(interest=interest)
     result_found = False
-    enough_matches = False
 
     # Get the keywords associated with Interest
     keywords = interest.keywords.split(',')
-    keyword_count = len(keywords)
 
     # Bring in the parsed feeds from each RSS source
     knowledge_sources = parse_rss_sources()
+
+    # Keep a list of what we're saving to avoid dups
+    stories_saved = []
 
     # For every source and its parsed entries
     for source, entries in knowledge_sources.items():
         # There are multiple stories in each "entry"
         for story in entries:
-            description = story.description.encode('utf-8')
+            description = story.description #.encode('utf-8')
             description = str(description)
             description = strip_tags(description)
             title = story.title
@@ -205,41 +205,37 @@ def build_results(request, interest):
             if article.text == '' or article.text == None:
                 keywords_found = find_keywords(description)
             else:
-                text = article.text.encode('utf-8')
+                text = article.text
                 keywords_found = find_keywords(str(text))
-            print(keywords_found)
-            return None
+            # print(keywords_found)
 
             # Search for the associated Interest keywords in the desctiptions and titles of every story
-            matches = 0
             for word in keywords:
-                word = word.lower()
+                word = word.strip().lower()
                 # If something is found, raise the flag
-                if re.search(r'\b' + word + r'\b', description.lower()) or re.search(r'\b' + word + r'\b', title.lower()):
-                    # print('{0} found'.format(word))
+                if word in keywords_found:
+                    print("Found result {}".format(word))
                     result_found = True
-                    matches += 1
-
-            if keyword_count > 1:
-                if matches >= 2: enough_matches = True
-            else:
-                if matches == 1: enough_matches = True
 
             # Before moving on to next thing, create a news item and add it to the results then reset flags
-            if result_found and enough_matches:
+            if result_found:
                 interest.last_refreshed = timezone.now()
                 interest.save()
-                news_item = NewsItem()
-                news_item.title = title
-                news_item.link = link
-                news_item.descr = description
-                news_item.source = source
-                news_item.save()
-                results.save()
-                results.newsitems.add(news_item)
-                results.save()
-                result_found = False
-                enough_matches = False
+                if title in stories_saved:
+                    continue
+                else:
+                    news_item = NewsItem()
+                    news_item.title = title
+                    news_item.link = link
+                    news_item.descr = description
+                    news_item.source = source
+                    news_item.top_img = article.top_image
+                    news_item.save()
+                    results.save()
+                    results.newsitems.add(news_item)
+                    stories_saved.append(title)
+                    results.save()
+                    result_found = False
     return results
 
 '''
@@ -255,11 +251,11 @@ def find_keywords(text, n=5):
     word_freq = [wordlist.count(p) for p in wordlist]
     kw_dict = dict(zip(wordlist, word_freq))
 
-    aux = [(kw_dict[key], key) for key in kw_dict]
-    aux.sort()
-    aux.reverse()
+    kw_list = [(kw_dict[key], key) for key in kw_dict]
+    kw_list.sort()
+    kw_list.reverse()
     topword_list = []
     for i in range(n):
-        topword_list.append(aux[i][1])
+        topword_list.append(kw_list[i][1].lower())
 
     return topword_list
