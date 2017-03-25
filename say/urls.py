@@ -16,11 +16,25 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from interests import views
+import sitepages.views
+from tastypie.api import Api
+from interests.api import InterestResource
+from accounts.api import UserResource, UserProfileResource
+from newsitems.api import NewsItemResource, NewsResultResource
+
+v1_api = Api(api_name='v1')
+v1_api.register(InterestResource())
+v1_api.register(UserResource())
+v1_api.register(UserProfileResource())
+v1_api.register(NewsItemResource())
+v1_api.register(NewsResultResource())
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^interests/', include('interests.urls')),
     url(r'^$', views.home, name='home'),
+    url(r'^about/', sitepages.views.about, name='about'),
+    url(r'^api/', include(v1_api.urls)),
 
 ]
