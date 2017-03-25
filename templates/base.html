@@ -20,12 +20,14 @@
     {% load static %}
     <link rel="stylesheet " href="{% static 'accounts/style.css' %}">
 
+    <!-- AngularJS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </head>
-  <body>
+  <body style="background-color:rgb(254,254,254);">
     <nav class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
@@ -61,7 +63,7 @@
               </li>
             </ul>
             <ul class="nav navbar-nav navbar-left">
-              <li><a href="#">About</a></li>
+              <li><a href="{% url 'about' %}">About</a></li>
               <li><a href="{% url 'interests:list' %}">Interests</a></li>
             </ul>
           {% else %}
