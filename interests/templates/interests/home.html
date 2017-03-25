@@ -21,26 +21,25 @@
         </a>
         <ul class="dropdown-menu">
             <li>
-              <a class="refresh-button" onClick="document.getElementById('refresh-form').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
+              <a class="refresh-button" onClick="document.getElementById('refresh-form{{u_interest.id}}').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
                 <span class="glyphicon glyphicon-refresh" style="color:green;"></span> Refresh
               </a>
-              <form id="refresh-form" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
+              <form id="refresh-form{{u_interest.id}}" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
                 {% csrf_token %}
                 <input type="hidden" value="refresh">
               </form>
             </li>
             <li>
-              <a href="#" class="deletebtn" onClick="document.getElementById('delete-form').submit()" title="Delete Interest">
+              <a href="#" class="deletebtn" onClick="document.getElementById('delete-form{{u_interest.id}}').submit()" title="Delete Interest">
                 <span class="glyphicon glyphicon-minus-sign" style="color:red;"></span> Delete
               </a>
-              <form id="delete-form" method="POST" action="{% url 'interests:remove' u_interest.id %}">
+              <form id="delete-form{{u_interest.id}}" method="POST" action="{% url 'interests:remove' u_interest.id %}">
                 {% csrf_token %}
                 <input type="hidden" value="delete">
               </form>
             </li>
         </ul>
       </div>
-
     </div>
     <div class="panel-body">
       <h6>
@@ -49,9 +48,11 @@
           Updated on {{ u_interest.last_refreshed }}
         </span>
       </h6>
-      
+
       {% if u_interest.newsresults.newsitems.all %}
         {% for r in u_interest.newsresults.newsitems.all %}<br>
+          <!-- <img src={{r.top_img}} height="150" width="200"/>
+          <br> -->
           <a href={{r.link}}>{{ r }}</a>
         {% endfor %}
       {% else %}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
 from .models import Interest
 from django.contrib.auth.models import User
@@ -38,7 +38,6 @@ def create(request):
 
 def refresh(request, pk):
     if request.method == 'POST':
-        # request.user.profile.interests.newsresults.newsitems.all.delete()
         interest = Interest.objects.get(pk=pk)
         NewsResult.objects.filter(interest__id=pk).delete()
         results = build_results(request, interest)
@@ -88,4 +87,4 @@ def remove(request, pk):
         interest = Interest.objects.get(pk=pk)
         request.user.profile.interests.remove(interest)
         interest.delete()
-        return render(request, 'interests/home.html')
+        return redirect('home')
