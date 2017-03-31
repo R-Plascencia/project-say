@@ -5,8 +5,10 @@ from .models import Interest
 from django.contrib.auth.models import User
 from accounts.models import UserProfile
 from django.template.defaulttags import register
-from newsitems.utils import build_results
+from newsitems.utils import populate_newsitems, get_newsitems
 from newsitems.models import NewsResult
+
+
 
 # Create your views here.
 @login_required
@@ -29,7 +31,7 @@ def create(request):
             interest.creator = request.user
             interest.save()
             request.user.profile.interests.add(interest)
-            results = build_results(request, interest)
+            results = get_newsitems(request, interest)
             return redirect('home')
         else:
             return render(request, 'interests/create.html', {'error':'Interest must have a title and maximum of 4 keywords'})
@@ -40,7 +42,7 @@ def refresh(request, pk):
     if request.method == 'POST':
         interest = Interest.objects.get(pk=pk)
         NewsResult.objects.filter(interest__id=pk).delete()
-        results = build_results(request, interest)
+        results = get_newsitems(request, interest)
         return redirect('home')
 
 def home(request):

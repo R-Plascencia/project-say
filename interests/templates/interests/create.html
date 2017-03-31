@@ -24,6 +24,7 @@
         <label for="title">Title:</label>
         <input ng-model="createCtrl.interest.title" type="text" class="form-control" name="title" id="title" required>
       </div>
+
       <form class="form-inline">
         <div class="form-group" id="keywords_div">
           <label for="keywords">Keywords (Maximum of 4):</label>
@@ -36,12 +37,14 @@
           </p>
         </div>
         <br>
+
         <button ng-disabled="createForm.$invalid" type="submit" class="btn btn-primary btn-success btn-lg btn-block" id="createbutton" data-toggle="modal" data-target="#creatingModal">
           <span class="glyphicon glyphicon-plus"></span> Create
         </button>
-      </form>
 
-    </div>
+      </form>
+    </form>
+  </div>
 </div>
 
 <!-- CREATING Modal -->
@@ -55,6 +58,7 @@
           <center>Creating Interest...</center>
         </h4>
       </div>
+
       <div class="modal-body">
         <div class="progress progress-striped active">
           <div class="progress-bar progress-bar-info" style="width: 100%"></div>
@@ -78,6 +82,7 @@
           <span class="glyphicon glyphicon-question-sign"></span> Help with Interest keywords
         </h4>
       </div>
+
       <div class="modal-body">
         <p>Keywords are words which describe the type of information you are looking for by using words which you would want to see
           in that information. (It could contain one or all of the provided keywords).

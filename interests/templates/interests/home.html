@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
-<br>
+<script src="{% static 'interests/js/app.js' %}" type="text/javascript"></script>
+<link rel="stylesheet " href="{% static 'interests/css/style.css' %}">
 <br>
 
 {% if user.is_authenticated %}
-  <a class="btn btn-primary btn-success" href="{% url 'interests:create' %}">
+  <a class="btn btn-primary btn-info" data-toggle="modal" data-target="#createInterestModal">
     <span class="glyphicon glyphicon-plus"></span> Create Interest
   </a>
   <br><br>
@@ -56,10 +56,15 @@
           <a href={{r.link}}>{{ r }}</a>
         {% endfor %}
       {% else %}
-        <i>No results found</i> <br>
+        <blockquote>
+          <i>No results found</i>
+          <br>
+        </blockquote>
       {% endif %}
-    </div><!-- END PANEL BODY -->
-  </div><!-- END PANEL -->
+    <!-- END PANEL BODY -->
+    </div>
+  <!-- END PANEL -->
+  </div>
 
   {% endfor %}
 
@@ -76,22 +81,112 @@
   </div>
 {% endif %}
 
-
+<!-- FETCHING KNOWLEDGE -->
 <div id="fetchingModal" class="modal fade">
   <div class="modal-dialog">
 
     <!-- Modal content-->
     <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title"><center>Fetching Knowledge...</center></h4>
-      </div>
       <div class="modal-body">
-        <div class="progress progress-striped active">
-          <div class="progress-bar progress-bar-info" style="width: 100%"></div>
-        </div>
+        <h4 class="modal-title">
+          <center>
+            <i class="fa fa-refresh fa-spin" style="font-size:24px"></i> Fetching Knowledge...
+          </center>
+        </h4>
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- CREATE AN INTEREST MODAL -->
+{% verbatim %}
+<div id="createInterestModal" class="modal fade" ng-app="interestApp" data-backdrop="{{ createCtrl.btnClicked ? 'static' : 'true' }}">
+{% endverbatim %}
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content" ng-controller="CreationController as createCtrl">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" ng-hide="createCtrl.btnClicked">&times;</button>
+        <h4 class="modal-title">
+          Create An Interest
+        </h4>
+      </div>
+      <div class="modal-body">
+        <!-- <div class="alert alert-dismissible alert-danger fade in">
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+          <strong>Oh snap!</strong> <a href="#" class="alert-link">Change a few things up</a> and try submitting again.
+        </div> -->
+
+        <br>
+        <!-- FORM nesting not allowed?? -->
+        <form name="createForm" method="POST" action="{% url 'interests:create' %}" novalidate>
+          {% csrf_token %}
+          <div class="form-group" id="title_div">
+            <label for="title">Title:</label>
+            <input ng-model="interest.title" type="text" class="form-control" name="title" id="title" required autofocus="">
+          </div>
+          <form class="form-inline">
+            <div class="form-group" id="keywords_div">
+              <label for="keywords">Keywords (Maximum of 4):</label>
+              <input ng-model="interest.keywords" type="text" class="form-control" aria-describedby="keyword-helptext" name="keywords" id="keywords" ng-pattern="/^\w([^,]*,){0,3}[^,]*$/" required>
+              <p id="keyword-helptext" class="form-text text-muted">
+                Keywords must be comma-separated
+                <a href="#" data-toggle="modal" data-target="#helpModal" title="Help">
+                  <span class="glyphicon glyphicon-question-sign"></span>
+                </a>
+              </p>
+            </div>
+            <br>
+            <button ng-disabled="createForm.$invalid" ng-click="createCtrl.btnClicked = !createCtrl.btnClicked" type="submit" class="btn btn-primary btn-info btn-lg btn-block" id="createbutton" data-toggle="modal" data-target="#creatingModal">
+              <span class="glyphicon glyphicon-plus" ng-hide="createCtrl.btnClicked"></span>
+              <i class="fa fa-circle-o-notch fa-spin" ng-show="createCtrl.btnClicked"></i>
+              {% verbatim %} {{createCtrl.btnClicked && 'Creating Interest...' || 'Create'}}  {% endverbatim %}
+            </button>
+          </form>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- HELP Modal -->
+<div id="helpModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">
+          <span class="glyphicon glyphicon-question-sign"></span> Help with Interest keywords
+        </h4>
+      </div>
+      <div class="modal-body">
+        <p>Keywords are words which describe the type of information you are looking for by using words which you would want to see
+          in that information. (It could contain one or all of the provided keywords).
+        </p>
+        <p>
+          An example of separate keywords for the interest "Election 2016": <br>
+          <b>
+            election, trump, hillary
+          </b>
+        </p>
+        <p>
+          You can also use short phrases as keywords. For example if you want to use "national security" as a keyword, then it must
+          be entered togther without a comma in between the words.
+        </p>
+        <p>
+          For example:<br>
+          <b>
+            national security, NSA, McMaster
+          </b>
+        </p>
+      </div>
+    </div>
+
   </div>
 </div>
 

@@ -2,134 +2,110 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
+<script src="{% static 'interests/js/app.js' %}" type="text/javascript"></script>
+<link rel="stylesheet" href="{% static 'interests/css/style.css' %}">
 <br>
-<div class="panel panel-default">
-  <div class="panel-body">
+<div class="panel panel-default" ng-app="interestApp">
+  <div class="panel-body" ng-controller="listController as listCtrl" ng-init="user_id = {{ user.id }}">
     <h3>Interests created by the Say community</h3>
 
     <br>
-    <form action="{% url 'interests:search' %}">
-      <div class="form-group" style="width:30%;">
-        <div class="input-group">
-          {% if searchtitle %}
-            <input type="text" class="form-control" name="searchtitle" value="{{searchtitle}}">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-            </span>
-            <!-- <span class="input-group-btn">
-              <button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-            </span> -->
-          {% else %}
-            <input type="text" class="form-control" name="searchtitle" placeholder="Search for Interests">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-            </span>
-          {% endif %}
-        </div>
+
+    <div class="form-group" style="width:30%;">
+
+      <div class="input-group">
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-search"></span>
+        </span>
+        <input type="text" class="form-control" name="searchtitle" ng-model="listCtrl.searchInterests" placeholder="Search for Interests">
       </div>
-    </form>
+
+    </div>
     <br>
 
-    <table class="table table-striped table-hover ">
-    <thead>
-      <tr>
-        <th><!--   -->
-          <a href="?order_by=num_of_imports&sort={{sort_type}}" style="text-decoration: none; color:black;">Imported
-          {% if order_by == 'num_of_imports' %}
-            {% if sort_type == 'ascending' %}
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            {% elif sort_type == 'descending' %}
-              <span class="glyphicon glyphicon-chevron-down"></span>
-            {% endif %}
-          {% endif %}
-          </a>
-        </th>
-        <th><!--   -->
-          <a href="?order_by=title&sort={{sort_type}}" style="text-decoration: none; color:black;">Title
-          {% if order_by == 'title' %}
-            {% if sort_type == 'ascending' %}
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            {% elif sort_type == 'descending' %}
-              <span class="glyphicon glyphicon-chevron-down"></span>
-            {% endif %}
-          {% endif %}
-          </a>
-        </th>
-        <th><!--   -->
-          <a href="?order_by=pub_date&sort={{sort_type}}" style="text-decoration: none; color: black;">Date Created
-          {% if order_by == 'pub_date' %}
-            {% if sort_type == 'ascending' %}
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            {% elif sort_type == 'descending' %}
-              <span class="glyphicon glyphicon-chevron-down"></span>
-            {% endif %}
-          {% endif %}
-          </a>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
+    <table class="table table-striped table-hover" id="interest-table">
+      <thead>
+        <tr>
+          <!-- IMPORTS -->
+          <th>
+            <a href="#" style="text-decoration: none;" class="list-header" ng-click="listCtrl.setSortType('imports'); listCtrl.toggleSortReverse()">
+              Imports
+              <span class="glyphicon glyphicon-chevron-up" ng-show="listCtrl.isSortedBy('imports') && listCtrl.sortReverse"></span>
+              <span class="glyphicon glyphicon-chevron-down" ng-show="listCtrl.isSortedBy('imports') && !listCtrl.sortReverse"></span>
+            </a>
+          </th>
 
-    {% if search_result %}
-      {% for i in search_result.all %}
-        <form method="POST" action="{% url 'interests:copy' i.id %}">
-          {% csrf_token %}
-            <tr>
-              <td>
-                {{ i.num_of_imports }}
-                {% if i.num_of_imports > 1 %}
-                  times
-                {% else %}
-                  time
-                {% endif %}
-              </td>
-              <td>
-                {{ i.title }}
-              </td>
-              <td>
-                {{ i.pub_date_pretty }}
-              </td>
-              <td>
-                <button type="submit" class="btn btn-primary btn-xs">
-                   <span class="glyphicon glyphicon-import"></span> Import
-                </button>
-                <!-- <input type="submit" value="Import"> -->
-              </td>
-        </form>
-      {% endfor %}
-    {% else %}
-      {% for i in interests.all %}
-      <form method="POST" action="{% url 'interests:copy' i.id %}">
-        {% csrf_token %}
-          <tr>
+          <!-- TITLE -->
+          <th>
+            <a href="#" style="text-decoration: none;" class="list-header" ng-click="listCtrl.setSortType('title'); listCtrl.toggleSortReverse()">
+              Title
+              <span class="glyphicon glyphicon-chevron-up" ng-show="listCtrl.isSortedBy('title') && listCtrl.sortReverse"></span>
+              <span class="glyphicon glyphicon-chevron-down" ng-show="listCtrl.isSortedBy('title') && !listCtrl.sortReverse"></span>
+            </a>
+          </th>
+
+          <!-- DATE -->
+          <th>
+            <a href="#" style="text-decoration: none;" class="list-header" ng-click="listCtrl.setSortType('date'); listCtrl.toggleSortReverse()">
+              Date Created
+              <span class="glyphicon glyphicon-chevron-up" ng-show="listCtrl.isSortedBy('date') && listCtrl.sortReverse"></span>
+              <span class="glyphicon glyphicon-chevron-down" ng-show="listCtrl.isSortedBy('date') && !listCtrl.sortReverse"></span>
+            </a>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+          <!-- Table Row -->
+          <!-- <tr ng-repeat="i in interests | orderBy:listCtrl.sortType:listCtrl.sortReverse | filter:listCtrl.searchInterests" class="repeated-item"> -->
+          <tr dir-paginate="i in interests | orderBy:listCtrl.sortType:listCtrl.sortReverse | filter:listCtrl.searchInterests | itemsPerPage:50" class="repeated-item">
+            {% verbatim %}
+            <!-- Num of imports cell -->
             <td>
               {{ i.num_of_imports }}
-              {% if i.num_of_imports > 1 %}
-                times
-              {% else %}
-                time
-              {% endif %}
             </td>
+
+            <!-- Title cell -->
             <td>
               {{ i.title }}
             </td>
-            <td>
-              {{ i.pub_date_pretty }}
-            </td>
-            <td>
-              <button type="submit" class="btn btn-primary btn-xs">
-                 <span class="glyphicon glyphicon-import"></span> Import
-              </button>
-              <!-- <input type="submit" value="Import"> -->
-            </td>
-      </form>
-      {% endfor %}
-    {% endif %}
 
+            <!-- Date Created cell -->
+            <td>
+              {{ i.pub_date | date }}
+            </td>
+            {% endverbatim %}
+
+            <!-- Import Button cell -->
+            <td>
+              <form name="interestImport" method="POST">
+                {% verbatim %}
+                <input type="hidden" value="{{ i.id }}" ng-model="interest_id">
+                {% endverbatim %}
+                {% csrf_token %}
+                <button type="submit" ng-init="disabled = false" class="btn btn-primary btn-xs" ng-class="{ 'btn-success': disabled }" ng-click="disabled=true; listCtrl.importInterest()" ng-disabled="disabled">
+                   <span class="glyphicon glyphicon-import" ng-show="!disabled"></span>
+                   <span class="glyphicon glyphicon-ok" ng-show="disabled"></span>
+                   {% verbatim %} {{disabled && ' Imported' || ' Import'}}  {% endverbatim %}
+                </button>
+              </form>
+            </td>
+
+          </tr>
+        </form>
       </tbody>
     </table>
   </div>
+
+  <!-- PAGINATION CONTROLS -->
+  <center>
+    <dir-pagination-controls
+       max-size="5"
+       direction-links="true"
+       boundary-links="true" >
+    </dir-pagination-controls>
+  </center>
+
 </div>
 
 

@@ -6,7 +6,7 @@ from django.utils import timezone
 # Create your models here.
 class Interest(models.Model):
     title = models.CharField(max_length=50)
-    keywords = models.TextField()
+    keywords = models.CharField(max_length=100)
     pub_date = models.DateTimeField()
     last_refreshed = models.DateTimeField(default=timezone.now())
     num_of_imports = models.IntegerField(default=1)
