@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'interests',
     'newsitems',
     'sitepages',
-    'tastypie'
+    'tastypie',
+    'djng',
 ]
 
 MIDDLEWARE = [
