@@ -1,6 +1,11 @@
 (function() {
 
-  var app = angular.module('interestApp', ['ngAnimate', 'angularUtils.directives.dirPagination', 'ui.bootstrap']);
+  var app = angular.module('sayApp', [
+    'ngAnimate',
+    'angularUtils.directives.dirPagination',
+    'ui.bootstrap',
+    'saySidebar'
+  ]);
   app.config(function($httpProvider) {
       $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   });
@@ -14,6 +19,7 @@
   app.controller('CreationController', function(){
     this.interest = {};
     this.btnClicked = false;
+    this.createOnly = false;
   });
 
   app.controller('listController', ['$http', '$log', '$scope', function($http, $log, $scope){
@@ -39,12 +45,6 @@
       $scope.interests = response.data.objects;
       $log.info($scope.interests);
     });
-
-    this.importInterest = function(){
-      $log.info($scope.user_id);
-      alert('User ID is ');
-      alert('Interest passed in is ' + interest);
-    };
 
 
   }]);

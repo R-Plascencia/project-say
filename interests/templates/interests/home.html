@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <script src="{% static 'interests/js/app.js' %}" type="text/javascript"></script>
-<link rel="stylesheet " href="{% static 'interests/css/style.css' %}">
+<!-- <link rel="stylesheet " href="{% static 'interests/css/style.css' %}"> -->
 <br>
 
 {% if user.is_authenticated %}
@@ -51,9 +51,18 @@
 
       {% if u_interest.newsresults.newsitems.all %}
         {% for r in u_interest.newsresults.newsitems.all %}<br>
-          <!-- <img src={{r.top_img}} height="150" width="200"/>
-          <br> -->
-          <a href={{r.link}}>{{ r }}</a>
+        <div class="row">
+          <div class="col-sm-6 col-md-4">
+            <div class="thumbnail">
+              <img src="{{r.top_img}}" alt="top">
+              <div class="caption">
+                <h3>{{r}}</h3>
+                <p>{{r.description}}</p>
+                <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
         {% endfor %}
       {% else %}
         <blockquote>
