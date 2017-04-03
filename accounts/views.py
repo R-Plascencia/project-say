@@ -8,15 +8,15 @@ def register(request):
         if request.POST['userpass'] == request.POST['userpass2']:
             try:
                 user = User.objects.get(username=request.POST['email'])
-                return render(request, 'accounts/register.html', {'error': 'The email you entered is already taken.'})
+                return render(request, 'welcome.html#signup', {'error': 'The email you entered is already taken.'})
             except User.DoesNotExist:
                 user = User.objects.create_user(username=request.POST['email'], first_name=request.POST['firstname'], last_name=request.POST['lastname'], email=request.POST['email'], password=request.POST['userpass'])
                 login(request, user)
-                return redirect('home')
+                return redirect('index')
         else:
-            return render(request, 'accounts/register.html', {'error': 'Passwords did not match.'})
+            return render(request, 'welcome.html', {'error': 'Passwords did not match.'})
     else:
-        return render(request, 'accounts/register.html')
+        return render(request, 'welcome.html#login')
 
 def user_login(request):
     if request.method == 'POST':
@@ -28,13 +28,13 @@ def user_login(request):
             if 'next' in request.POST:
                 if request.POST['next'] is not None:
                     return redirect(request.POST['next'])
-            return redirect('home')
+            return redirect('index')
         else:
-            return render(request, 'accounts/login.html', {'error': 'Login information is incorrect.'})
+            return render(request, 'welcome.html#login', {'error': 'Login information is incorrect.'})
     else:
-        return render(request, 'accounts/login.html')
+        return render(request, 'welcome.html#signup')
 
 def user_logout(request):
     if request.method == 'POST':
         logout(request)
-        return redirect('home')
+        return redirect('index')
