@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Say: Your Truthful Knowledge Fetcher</title>
+
+    {% load static %}
+    <!-- IE10 Viewport Bug Workaround -->
+    <link href="{% static 'interests/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+
+    <!-- Flatly Bootstrap Theme -->
+    <link rel="stylesheet" href="https://bootswatch.com/flatly/bootstrap.min.css" crossorigin="anonymous">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Custom CSS for sidebar -->
+    <link href="{% static 'accounts/css/simple-sidebar.css' %}" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <base href="/">
+</head>
+<body ng-app="sayApp" ng-init="profileid = {{ profile_id }}">
+    <div id="wrapper" class="toggled">
+
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper" id="mynav" ng-controller="SidebarController as sideCtrl">
+          <center>
+            <a class="sidebar-brand">
+                <img alt="Brand" src="{% static 'interests/say-icon3.png' %}" height="155" style="padding-top: 7px;">
+            </a>
+          </center>
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mynav">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+          <ul class="nav sidebar-nav">
+            <li class="dropdown">
+              <a href="#" id="userDrop" class="dropdown-toggle" data-toggle="collapse" data-target="#userMenu" role="button" aria-expanded="false" ng-click="sideCtrl.toggleUser = !sideCtrl.toggleUser">
+                <span class="glyphicon glyphicon-user" style="padding-right:3px;"></span>
+                 Hi, {{ user.get_short_name }}
+                <span class="fa fa-caret-down" ng-show="!sideCtrl.toggleUser"></span>
+                <span class="fa fa-caret-up" ng-show="sideCtrl.toggleUser"></span>
+              </a>
+              <ul class="collapse" role="menu" id="userMenu">
+                <li>
+                  <a href="#" onClick="document.getElementById('logout-form').submit()">Logout</a>
+                </li>
+                <form id="logout-form" method="POST" action="{% url 'accounts:logout' %}">
+                  {% csrf_token %}
+                  <input type="hidden" value="Logout">
+                </form>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" id="createDrop" data-toggle="collapse" data-target="#createInterest" ng-click="sideCtrl.createOnly = !sideCtrl.createOnly">
+                <span class="glyphicon glyphicon-plus" style="padding-right:3px;"></span>
+                Create Interest
+                <span class="fa fa-caret-down" ng-show="!sideCtrl.createOnly"></span>
+                <span class="fa fa-caret-up" ng-show="sideCtrl.createOnly"></span>
+              </a>
+                <form name="createForm" id="createInterest" method="POST" action="{% url 'interests:create' %}" class="dropdown-form collapse" ng-controller="CreationController as createCtrl" novalidate>
+                  {% csrf_token %}
+                  <div class="form-group" id="title_div">
+                    <label for="title">
+                      <h6> Title: </h6>
+                    </label>
+                    <center>
+                      <input ng-model="interest.title" type="text" class="form-control input-sm" name="title" id="title" required autofocus="">
+                    </center>
+                  </div>
+                  <form class="form-inline">
+                    <div class="form-group" id="keywords_div">
+                      <label for="keywords">
+                        <h6> Keywords (Maximum of 4): </h6>
+                      </label>
+                      <center>
+                        <input ng-model="interest.keywords" type="text" class="form-control input-sm" aria-describedby="keyword-helptext" name="keywords" id="keywords" ng-pattern="/^\w([^,]*,){0,3}[^,]*$/" required>
+                      </center>
+                      <span id="keyword-helptext" class="form-text text-muted">
+                        <h6>Keywords must be comma-separated</h6>
+                      </span>
+                    </div>
+                    <br>
+                    <center>
+                      <button ng-disabled="createForm.$invalid" ng-click="createCtrl.btnClicked = !createCtrl.btnClicked" type="submit" class="btn btn-primary btn-info btn-block" id="createbutton">
+                        <span class="glyphicon glyphicon-plus" ng-hide="createCtrl.btnClicked"></span>
+                        <i class="fa fa-circle-o-notch fa-spin" ng-show="createCtrl.btnClicked"></i>
+                        {% verbatim %} {{createCtrl.btnClicked && 'Creating Interest...' || 'Create'}}  {% endverbatim %}
+                      </button>
+                    </center>
+                  </form>
+                </form>
+            </li>
+            <li>
+              <a href="#" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(1)" ng-class="{ 'active' : sideCtrl.isActive(1)}">
+                <span class="glyphicon glyphicon-home" style="padding-right:3px;"></span> Home
+              </a>
+            </li>
+            <li>
+              <a href="#" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(2)" ng-class="{ 'active' : sideCtrl.isActive(2)}">
+                <span class="glyphicon glyphicon-globe" style="padding-right:3px;"></span> Interests
+              </a>
+            </li>
+            <li>
+              <a href="#" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(3)" ng-class="{ 'active' : sideCtrl.isActive(3)}">
+                <span class="glyphicon glyphicon-info-sign" style="padding-right:3px;"></span> About
+              </a>
+            </li>
+          </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                  <!-- CONTROL WITH NG ROUTE -->
+                    <div class="col-lg-12" ng-view>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+
+    <!-- JAVASCRIPT FILES for faster page loading
+    =============================================================== -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- AngularJS Core -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.3/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.3/angular-aria.min.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.3/angular-route.js"></script>
+
+    <!-- AngularJS files -->
+    <script src="{% static 'interests/js/app.js' %}" type="text/javascript"></script>
+    <script src="{% static 'interests/js/dirPagination.js' %}" type="text/javascript"></script>
+    <script src="{% static 'interests/js/say-sidebar.js' %}" type="text/javascript"></script>
+    <script src="{% static 'interests/js/interest.js' %}" type="text/javascript"></script>
+
+    <!-- IE10 Viewport bug workaround -->
+    <script src="{% static 'interests/js/ie10-viewport-bug-workaround.js' %}" type="text/javascript"></script>
+
+    <!-- Quick blur for non-tab side links -->
+    <script type="text/javascript">
+      $("#userDrop").mouseup(function(){
+        $(this).blur();
+      });
+      $("#createDrop").mouseup(function(){
+        $(this).blur();
+      });
+    </script>
+</body>
+</html>
