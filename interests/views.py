@@ -45,34 +45,12 @@ def refresh(request, pk):
         results = get_newsitems(request, interest)
         return redirect('home')
 
-def home(request):
+def index(request):
     if request.user.is_anonymous():
-        return render(request, 'interests/home.html')
+        return render(request, 'welcome.html')
     else:
         interests = request.user.profile.interests
-        return render(request, 'interests/home.html', {'interests': interests})
-
-def search(request):
-    search_query = request.GET.get('searchtitle')
-    search_result = Interest.objects.filter(title__contains=search_query).order_by('num_of_imports')
-    return render(request, 'interests/list.html', {'search_result':search_result, 'searchtitle':search_query, 'order_by': 'num_of_imports'})
-
-def list(request):
-    order_by = request.GET.get('order_by', 'num_of_imports')
-    first_time = False
-    if request.GET.get('sort'):
-        sort_type = request.GET.get('sort')
-    else:
-        first_time = True
-        sort_type = 'ascending'
-
-    if sort_type == 'ascending':
-        interests = Interest.objects.order_by('-' + order_by)
-        if not first_time: sort_type = 'descending'
-    else:
-        interests = Interest.objects.order_by(order_by)
-        sort_type = 'ascending'
-    return render(request, 'interests/list.html', {'interests':interests, 'sort_type':sort_type, 'order_by':order_by})
+        return render(request, 'index.html', {'interests': interests, 'profile_id': request.user.profile.id})
 
 def copy(request, pk):
     if request.method == 'POST':

@@ -4,10 +4,11 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from .models import Interest
 from accounts.api import UserResource
+from newsitems.api import NewsResultResource
 
 class InterestResource(ModelResource):
     creator = fields.ForeignKey(UserResource, 'creator', full=True)
-    
+    news_result = fields.ForeignKey(NewsResultResource, 'news_result', null=True, full=True)
     class Meta:
         queryset = Interest.objects.all()
         resource_name = 'interest'

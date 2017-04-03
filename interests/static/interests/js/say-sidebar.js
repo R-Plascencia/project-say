@@ -1,4 +1,7 @@
 (function(){
+  //
+  // Module and contollers for the main nav side bar
+  //
   var app = angular.module('saySidebar', []);
 
   app.controller('SidebarController', function(){

@@ -1,16 +1,7 @@
-{% extends 'base.html' %}
-{% block content %}
-{% load static %}
-<script src="{% static 'interests/js/app.js' %}" type="text/javascript"></script>
-<!-- <link rel="stylesheet " href="{% static 'interests/css/style.css' %}"> -->
+
 <br>
 
 {% if user.is_authenticated %}
-  <a class="btn btn-primary btn-info" data-toggle="modal" data-target="#createInterestModal">
-    <span class="glyphicon glyphicon-plus"></span> Create Interest
-  </a>
-  <br><br>
-
   {% for u_interest in user.profile.interests.all %}
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -109,13 +100,13 @@
 </div>
 
 <!-- CREATE AN INTEREST MODAL -->
-{% verbatim %}
+<!-- {% verbatim %}
 <div id="createInterestModal" class="modal fade" ng-app="interestApp" data-backdrop="{{ createCtrl.btnClicked ? 'static' : 'true' }}">
 {% endverbatim %}
   <div class="modal-dialog">
 
     <!-- Modal content-->
-    <div class="modal-content" ng-controller="CreationController as createCtrl">
+    <!-- <div class="modal-content" ng-controller="CreationController as createCtrl">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" ng-hide="createCtrl.btnClicked">&times;</button>
         <h4 class="modal-title">
@@ -130,7 +121,7 @@
 
         <br>
         <!-- FORM nesting not allowed?? -->
-        <form name="createForm" method="POST" action="{% url 'interests:create' %}" novalidate>
+        <!-- <form name="createForm" method="POST" action="{% url 'interests:create' %}" novalidate>
           {% csrf_token %}
           <div class="form-group" id="title_div">
             <label for="title">Title:</label>
@@ -159,14 +150,14 @@
 
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- HELP Modal -->
-<div id="helpModal" class="modal fade" role="dialog">
+<!-- <div id="helpModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
-    <div class="modal-content">
+    <!-- <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         <h4 class="modal-title">
@@ -197,6 +188,4 @@
     </div>
 
   </div>
-</div>
-
-{% endblock %}
+</div> -->

@@ -1,14 +1,26 @@
 (function() {
-
+  //
+  // MAIN APP MODULE
+  //
   var app = angular.module('sayApp', [
     'ngAnimate',
+    'ngRoute',
     'angularUtils.directives.dirPagination',
     'ui.bootstrap',
-    'saySidebar'
+    'saySidebar',
+    'interest'
   ]);
-  app.config(function($httpProvider) {
+  app.config(function($httpProvider, $routeProvider, $locationProvider) {
       $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+      $locationProvider.html5Mode(true);
+      $routeProvider
+      .when('/', {
+        templateUrl: '/static/interests/views/home.html',
+        controller: 'HomeController',
+        controllerAs: 'homeCtrl'
+      });
   });
+
 
   // // Avoid Django and NG template tag collision
   // app.config(function($interpolateProvider){
@@ -21,33 +33,6 @@
     this.btnClicked = false;
     this.createOnly = false;
   });
-
-  app.controller('listController', ['$http', '$log', '$scope', function($http, $log, $scope){
-    this.sortType = 'imports';
-    this.sortReverse = false;
-    this.searchInterests = '';
-    this.btnClicked = false;
-
-    this.setSortType = function(sortType){
-      this.sortType = sortType;
-    };
-
-    this.isSortedBy = function(sortType){
-      return this.sortType === sortType;
-    };
-
-    this.toggleSortReverse = function(){
-      this.sortReverse = !this.sortReverse;
-    };
-
-    $scope.interests = [];
-    $http.get('/api/v1/interest/?format=json').then(function(response){
-      $scope.interests = response.data.objects;
-      $log.info($scope.interests);
-    });
-
-
-  }]);
 
   app.filter('anyInvalidDirtyFields', function () {
     return function(form) {
