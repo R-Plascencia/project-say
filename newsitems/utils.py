@@ -3,6 +3,7 @@ from .models import NewsItem
 from .models import NewsResult
 from django.utils import timezone
 from django.utils.html import strip_tags
+from django.db import IntegrityError
 from newspaper import Article
 from datetime import datetime
 import feedparser
@@ -190,7 +191,7 @@ def populate_newsitems():
             else:
                 stories_saved.append(title)
 
-            description = story.description #.encode('utf-8')
+            description = story.description.encode('utf-8')
             description = str(description)
             description = strip_tags(description)
             link = story.link
@@ -216,9 +217,13 @@ def populate_newsitems():
                 text = article.text
                 keywords_found = find_keywords(str(text))
 
-            # Save into DB
+            # Create NewsItem and Save into DB unless it raises IntegrityError (already exists)
             news_item = NewsItem()
-            news_item.title = title
+            try:
+                news_item.title = title
+                news_item.save()
+            except IntegrityError as e:
+                continue
             news_item.link = link
             news_item.description = description
             news_item.source = source
@@ -284,7 +289,10 @@ def find_keywords(text, n=5):
     kw_list.reverse()
     topword_list = []
     for i in range(n):
-        topword_list.append(kw_list[i][1].lower())
+        try:
+            topword_list.append(kw_list[i][1].lower())
+        except IndexError:
+            pass
 
     return topword_list
 
