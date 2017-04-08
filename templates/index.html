@@ -39,7 +39,7 @@
         <div id="sidebar-wrapper" id="mynav" ng-controller="SidebarController as sideCtrl">
           <center>
             <a class="sidebar-brand">
-                <img alt="Brand" src="{% static 'interests/say-icon3.png' %}" height="155" style="padding-top: 7px;">
+                <img alt="Brand" src="{% static 'interests/say-topicon3.png' %}" height="155" style="padding-top: 7px;">
             </a>
           </center>
           <div class="navbar-header">
@@ -59,7 +59,7 @@
               </a>
               <ul class="collapse" role="menu" id="userMenu">
                 <li>
-                  <a href="#" onClick="document.getElementById('logout-form').submit()">Logout</a>
+                  <a href="#" id="logoutBtn" onClick="document.getElementById('logout-form').submit()">Logout</a>
                 </li>
                 <form id="logout-form" method="POST" action="{% url 'accounts:logout' %}">
                   {% csrf_token %}
@@ -172,6 +172,9 @@
         $(this).blur();
       });
       $("#createDrop").mouseup(function(){
+        $(this).blur();
+      });
+      $("#logoutBtn").mouseup(function(){
         $(this).blur();
       });
     </script>

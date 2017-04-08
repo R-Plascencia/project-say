@@ -12,16 +12,24 @@
   <!-- Bootstrap Core CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <!-- Cover page CSS -->
   <link href="{% static 'accounts/css/cover-page.css' %}" rel="stylesheet">
 </head>
 <body ng-app="sayCoverPage">
-  <div class="site-wrapper" ng-controller="CoverController as coverCtrl">
+  <div class="site-wrapper">
 
     <div class="site-wrapper-inner">
 
-      <div class="cover-container">
-
+      <div class="cover-container" ng-controller="CoverController as coverCtrl">
+        {% if reg_error %}
+          <span ng-init="coverCtrl.setActiveLink(2)"></span>
+        {% endif %}
+        {% if login_error %}
+          <span ng-init="coverCtrl.setActiveLink(3)"></span>
+        {% endif %}
         <div class="masthead clearfix">
           <div class="inner">
             <h3 class="masthead-brand">Project Say</h3>
@@ -33,7 +41,7 @@
                   </a>
                 </li>
                 <li class="sliding-link" ng-click="coverCtrl.setActiveLink(2)" ng-class="{ 'active': coverCtrl.isActiveLink(2)}">
-                  <a href="#signup" data-toggle="collapse" data-target="#registerForm" >
+                  <a href="#signup">
                     Sign Up!
                   </a>
                 </li>
@@ -47,10 +55,11 @@
           </div>
         </div>
 
-        <div class="inner cover">
+        <div class="inner cover" ng-switch on="coverCtrl.activeLink">
 
           <!-- SPLASH TEXT -->
-          <div ng-show="coverCtrl.isActiveLink(1)">
+          <!-- <div ng-show="coverCtrl.isActiveLink(1)"> -->
+          <div ng-switch-default>
             <h1 class="cover-heading">Say: Your Truthful News Fetcher</h1>
             <p class="lead">
               In today's politics, it can sometimes be hard to know if the news you're reading is reliable.
@@ -66,64 +75,70 @@
           </div>
 
           <!-- REGISTER FORM -->
-          <div class="well well-sm" ng-show="coverCtrl.isActiveLink(2)">
-            {% if error %}
-              <div class="alert alert-dismissible alert-danger">
+          <!-- <div class="well well-sm" ng-show="coverCtrl.isActiveLink(2)"> -->
+          <div class="well well-sm" ng-switch-when="2">
+            {% if reg_error %}
+              <div class="alert alert-dismissible alert-danger no-shadow">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Oops!</strong> {{ error }}
+                <strong>Oops!</strong> {{ reg_error }}
               </div>
             {% endif %}
-            <form method="POST" action="{% url 'accounts:register' %}">
+            <form name="regForm" method="POST" action="{% url 'accounts:register' %}" novalidate>
               {% csrf_token %}
-              <div class="form-group">
-                <label for="email">Email address:</label>
-                <input type="email" class="form-control" name="email" autofocus="">
-              </div>
-              <div class="form-group">
-                <label for="firstname">First Name:</label>
-                <input type="firstname" class="form-control" name="firstname">
-                <label for="lastname">Last Name:</label>
-                <input type="lastname" class="form-control" name="lastname">
-              </div>
-              <div class="form-group">
-                <label for="pwd">Password:</label>
-                <input type="password" class="form-control" name="userpass">
-                <label for="pwd">Confirm Password:</label>
-                <input type="password" class="form-control" name="userpass2">
-              </div>
+
+              <!-- Email -->
+              <input type="email" placeholder="Email Address "class="form-control has-error" name="uEmail" ng-model="user.email" required>
+              <br>
+
+              <!-- First Name -->
+              <input type="firstname" placeholder="First Name" class="form-control" name="firstname" ng-model="user.firstname" required>
+              <br>
+
+              <!-- Last Name -->
+              <input type="lastname" placeholder="Last Name" class="form-control" name="lastname" ng-model="user.lastname" required>
+              <br>
+
+              <!-- Passwords -->
+              <input type="password" placeholder="Password" class="form-control" name="userpass" ng-model="user.pw1" required>
+              <br>
+              <input type="password" placeholder="Confirm Password" class="form-control" name="userpass2" ng-model="user.pw2" required>
               <!-- TODO Maybe implement later
               <div class="checkbox">
                 <label><input type="checkbox"> Remember me</label>
               </div> -->
               <br>
-              <input class="btn btn-primary btn-lg btn-block" type="submit" value="Sign Up!">
+              <button class="btn btn-primary btn-lg btn-block" type="submit" ng-click="coverCtrl.regBtnClicked = !coverCtrl.regBtnClicked" ng-disabled="regForm.$invalid">
+                <i class="fa fa-circle-o-notch fa-spin" ng-show="coverCtrl.regBtnClicked"></i>
+                {% verbatim %} {{coverCtrl.regBtnClicked && 'Signing Up!' || 'Sign Up!'}}  {% endverbatim %}
+              </button>
             </form>
           </div>
 
           <!-- LOGIN FORM -->
-          <div class="well well-sm" ng-show="coverCtrl.isActiveLink(3)">
-            {% if error %}
-              <div class="alert alert-dismissible alert-danger">
+          <!-- <div class="well well-sm" ng-show="coverCtrl.isActiveLink(3)"> -->
+          <div class="well well-sm" ng-switch-when="3">
+            {% if login_error %}
+              <div class="alert alert-dismissible alert-danger no-shadow">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Uh oh!</strong> {{ error }}. If you have not created an account be sure to sign up!
+                <strong>Uh oh!</strong> {{ login_error }} If you have not created an account be sure to sign up first!
               </div>
             {% endif %}
-            <form method="POST" action="{% url 'accounts:login' %}">
+            <form method="POST" name="loginForm" action="{% url 'accounts:login' %}" novalidate>
               {% csrf_token %}
               <div class="form-group">
-                <label for="email">Email address:</label>
-                <input type="email" class="form-control" name="email" autofocus="">
+                <input type="email" class="form-control" name="email" placeholder="Email Address" ng-model="user.email" required>
               </div>
               <div class="form-group">
-                <label for="pwd">Password:</label>
-                <input type="password" class="form-control" name="userpass">
+                <input type="password" class="form-control" name="userpass" placeholder="Password" ng-model="user.password" required>
               </div>
               <!-- TODO Maybe implement later
               <div class="checkbox">
                 <label><input type="checkbox"> Remember me</label>
               </div> -->
-              <br>
-              <input class="btn btn-primary btn-lg btn-block" type="submit" value="Login">
+              <button class="btn btn-primary btn-lg btn-block" type="submit" ng-click="coverCtrl.loginBtnClicked = !coverCtrl.loginBtnClicked" ng-disabled="loginForm.$invalid">
+                <i class="fa fa-circle-o-notch fa-spin" ng-show="coverCtrl.loginBtnClicked"></i>
+                {% verbatim %} {{coverCtrl.loginBtnClicked && 'Logging in...' || 'Login'}}  {% endverbatim %}
+              </button>
             </form>
           </div>
 
@@ -154,7 +169,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.3/angular-route.js"></script>
 
   <!-- Cover Page app -->
-  <script src="{% static 'interests/js/say-coverpage.js' %}" type="text/javascript"></script>
+  <script src="{% static 'accounts/js/say-coverpage.js' %}" type="text/javascript"></script>
   <!-- IE10 Viewport bug workaround -->
   <script src="{% static 'interests/js/ie10-viewport-bug-workaround.js' %}" type="text/javascript"></script>
 </body>
