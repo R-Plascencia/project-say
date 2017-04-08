@@ -7,9 +7,9 @@ p.jumbo {
   font-family: helvetica, sans-serif;
 }
 
-.ng-invalid.ng-dirty {
+/*.has-error {
   border-color: red;
-}
+}*/
 
 .navbar {
   border-radius: 0 !important;

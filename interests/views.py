@@ -32,18 +32,18 @@ def create(request):
             interest.save()
             request.user.profile.interests.add(interest)
             results = get_newsitems(request, interest)
-            return redirect('home')
+            return redirect('index')
         else:
             return render(request, 'interests/create.html', {'error':'Interest must have a title and maximum of 4 keywords'})
     else:
-        return render(request, 'interests/create.html')
+        return render(request, 'index.html')
 
 def refresh(request, pk):
     if request.method == 'POST':
         interest = Interest.objects.get(pk=pk)
         NewsResult.objects.filter(interest__id=pk).delete()
         results = get_newsitems(request, interest)
-        return redirect('home')
+        return redirect('index')
 
 def index(request):
     if request.user.is_anonymous():
@@ -60,11 +60,11 @@ def copy(request, pk):
         u = request.user
         u.profile.interests.add(interest)
         u.profile.save()
-        return redirect('home')
+        return redirect('index')
 
 def remove(request, pk):
     if request.method == 'POST':
         interest = Interest.objects.get(pk=pk)
         request.user.profile.interests.remove(interest)
         interest.delete()
-        return redirect('home')
+        return redirect('index')

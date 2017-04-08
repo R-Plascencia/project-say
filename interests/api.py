@@ -8,7 +8,7 @@ from newsitems.api import NewsResultResource
 
 class InterestResource(ModelResource):
     creator = fields.ForeignKey(UserResource, 'creator', full=True)
-    news_result = fields.ForeignKey(NewsResultResource, 'news_result', null=True, full=True)
+    news_result = fields.OneToOneField(NewsResultResource, 'newsresults', null=True, full=True)
     class Meta:
         queryset = Interest.objects.all()
         resource_name = 'interest'

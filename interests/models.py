@@ -13,7 +13,6 @@ class Interest(models.Model):
     last_refreshed = models.DateTimeField(default=timezone.now())
     num_of_imports = models.IntegerField(default=1)
     creator = models.ForeignKey(User, related_name='creator')
-    # news_result = models.ForeignKey('newsitems.NewsResult', related_name='newsresult')
 
     def __str__(self):
         return self.title
