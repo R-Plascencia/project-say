@@ -23,9 +23,9 @@ class Interest(models.Model):
     def refresh_time_pretty(self):
         return self.last_refreshed.strftime('%b %e %Y')
 
-@receiver(post_save, sender=Interest)
-def create_results_bucket(sender, **kwargs):
-    result_inst = kwargs["instance"]
-    if kwargs["created"]:
-        news_results = Interest(newsresult=result_inst)
-        news_results.save()
+# @receiver(post_save, sender=Interest)
+# def create_results_bucket(sender, **kwargs):
+#     result_inst = kwargs["instance"]
+#     if kwargs["created"]:
+#         news_results = Interest(newsresult=result_inst)
+#         news_results.save()

@@ -10,16 +10,24 @@
     'saySidebar',
     'interest'
   ]);
-  app.config(function($httpProvider, $routeProvider, $locationProvider) {
-      $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+  app.config(['$httpProvider', '$routeProvider', '$locationProvider', function($httpProvider, $routeProvider, $locationProvider) {
       $locationProvider.html5Mode(true);
       $routeProvider
       .when('/', {
-        templateUrl: '/static/interests/views/home.html',
-        controller: 'HomeController',
-        controllerAs: 'homeCtrl'
+        templateUrl: '/static/interests/templates/home.html',
+        controller: 'HomeController'
+      })
+      .when('/interests/list',{
+        templateUrl: '/static/interests/templates/list.html',
+        controller: 'ListController'
+      })
+      .when('/about', {
+        templateUrl: '/static/sitepages/templates/about.html'
+      })
+      .otherwise({
+        redirectTo: '/static/interests/templates/home.html'
       });
-  });
+  }]);
 
 
   // // Avoid Django and NG template tag collision
@@ -27,12 +35,6 @@
   //   $interpolateProvider.startSymbol('{$');
   //   $interpolateProvider.endSymbol('$}');
   // });
-
-  app.controller('CreationController', function(){
-    this.interest = {};
-    this.btnClicked = false;
-    this.createOnly = false;
-  });
 
   app.filter('anyInvalidDirtyFields', function () {
     return function(form) {

@@ -31,6 +31,7 @@ def create(request):
             interest.creator = request.user
             interest.save()
             request.user.profile.interests.add(interest)
+            request.user.profile.save()
             results = get_newsitems(request, interest)
             return redirect('index')
         else:
@@ -68,3 +69,6 @@ def remove(request, pk):
         request.user.profile.interests.remove(interest)
         interest.delete()
         return redirect('index')
+
+def list(request):
+    return render(request, 'index.html')

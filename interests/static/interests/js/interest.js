@@ -4,19 +4,19 @@
   //
   var app = angular.module('interest', []);
 
-  app.factory('userProfileFactory', ['$http', function($http, $scope){
+  app.factory('userFactory', ['$http', function($http, $scope){
     var promise = null;
-    var userProfileFactory = {};
+    var userFactory = {};
 
-    userProfileFactory.getInterestURIs = function(profileid){
-      return $http.get('/api/v1/user_profile/' + profileid + '/?format=json');
+    userFactory.getUser = function(user_id){
+      return $http.get('/api/v1/user/' + user_id + '/?format=json');
     };
 
-    return userProfileFactory;
+    return userFactory;
   }]);
 
 
-  app.controller('listController', ['$http', '$log', '$scope', function($http, $log, $scope){
+  app.controller('ListController', ['$http', '$log', '$scope', function($http, $log, $scope){
     this.sortType = 'imports';
     this.sortReverse = false;
     this.searchInterests = '';
@@ -42,15 +42,15 @@
   }]);
 
 
-  app.controller('HomeController', ['$http', '$log', '$scope', 'userProfileFactory', function($http, $log, $scope, userProfileFactory){
+  app.controller('HomeController', ['$http', '$log', '$scope', 'userFactory', function($http, $log, $scope, userFactory){
     $scope.userInterests = [];
     // $http.get('/api/v1/user_profile/' + $scope.profileid + '/?format=json').then(function(response){
     //   $log.info($scope.profileid);
     //   $scope.userInterests = response.data.interests;
     //   $log.info($scope.userInterests);
     // });
-    userProfileFactory.getInterestURIs($scope.profileid).then(function(response){
-      $log.info('URIs of user intersts are ' + response.data.interests);
+    userFactory.getUser($scope.uid).then(function(response){
+      $log.info('URIs of user intersts are ' + response.data.profile.interests);
     });
 
   }]);

@@ -7,7 +7,7 @@ from accounts.api import UserResource
 from newsitems.api import NewsResultResource
 
 class InterestResource(ModelResource):
-    creator = fields.ForeignKey(UserResource, 'creator', full=True)
+    creator = fields.ForeignKey(UserResource, 'creator')
     news_result = fields.OneToOneField(NewsResultResource, 'newsresults', null=True, full=True)
     class Meta:
         queryset = Interest.objects.all()
