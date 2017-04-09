@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('accounts.urls')),
     url(r'^interests/', include('interests.urls')),
-    url(r'^$', views.home, name='home'),
+    url(r'^$', views.index, name='index'),
     url(r'^about/', sitepages.views.about, name='about'),
     url(r'^api/', include(v1_api.urls)),
 
