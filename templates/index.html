@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="sayApp">
 
 <head>
 
@@ -24,6 +24,9 @@
     <!-- Custom CSS for sidebar -->
     <link href="{% static 'accounts/css/simple-sidebar.css' %}" rel="stylesheet">
 
+    <!-- Styling for List template -->
+    <link rel="stylesheet" href="{% static 'interests/css/liststyle.css' %}">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -32,7 +35,7 @@
     <![endif]-->
     <base href="/">
 </head>
-<body ng-app="sayApp" ng-init="profileid = {{ profile_id }}">
+<body ng-init="uid = {{ user.id }}">
     <div id="wrapper" class="toggled">
 
         <!-- Sidebar -->
@@ -108,17 +111,17 @@
                 </form>
             </li>
             <li>
-              <a href="#" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(1)" ng-class="{ 'active' : sideCtrl.isActive(1)}">
+              <a href="/" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(1)" ng-class="{ 'active' : sideCtrl.isActive(1)}">
                 <span class="glyphicon glyphicon-home" style="padding-right:3px;"></span> Home
               </a>
             </li>
             <li>
-              <a href="#" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(2)" ng-class="{ 'active' : sideCtrl.isActive(2)}">
+              <a href="interests/list" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(2)" ng-class="{ 'active' : sideCtrl.isActive(2)}">
                 <span class="glyphicon glyphicon-globe" style="padding-right:3px;"></span> Interests
               </a>
             </li>
             <li>
-              <a href="#" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(3)" ng-class="{ 'active' : sideCtrl.isActive(3)}">
+              <a href="/about" ng-hide="sideCtrl.createOnly" ng-click="sideCtrl.setActiveTab(3)" ng-class="{ 'active' : sideCtrl.isActive(3)}">
                 <span class="glyphicon glyphicon-info-sign" style="padding-right:3px;"></span> About
               </a>
             </li>
@@ -146,7 +149,7 @@
     <!-- JAVASCRIPT FILES for faster page loading
     =============================================================== -->
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Bootstrap JS -->
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
