@@ -4,8 +4,8 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from .models import UserProfile
 
-
 class UserProfileResource(ModelResource):
+    user = fields.ToOneField('accounts.api.UserResource', 'user')
     interests = fields.ToManyField('interests.api.InterestResource', 'interests')
     class Meta:
         queryset = UserProfile.objects.all()
@@ -13,7 +13,7 @@ class UserProfileResource(ModelResource):
         authorization = Authorization()
 
 class UserResource(ModelResource):
-    profile = fields.ForeignKey(UserProfileResource, 'profile', full=True)
+    profile = fields.OneToOneField(UserProfileResource, 'profile', full=True)
     class Meta:
         queryset = User.objects.all()
         resource_name = 'user'
