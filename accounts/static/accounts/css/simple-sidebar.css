@@ -153,3 +153,31 @@ li a.active {
         margin-right: 0;
     }
 }
+
+/* slide in from the bottom and fade in */
+@keyframes slideInUp {
+    from  { transform:translateY(100%); opacity: 0; }
+    to    { transform: translateY(0); opacity: 1; }
+}
+
+/* slide down and fade out */
+@keyframes slideOutDown {
+    from  { transform:translateY(0); opacity: 1; }
+    to    { transform: translateY(100%); opacity: 0; }
+}
+
+.ng-enter {
+  animation: slideInUp 0.5s both ease-in;
+  -webkit-animation: slideInUp 0.5s both ease-in;
+  -moz-animation: slideInUp 0.5s both ease-in;
+  -o-animation: slideInUp 0.5s both ease-in;
+  z-index: 8888;
+}
+
+.ng-leave {
+  animation: slideOutDown 0.5s both ease-in;
+  -webkit-animation: slideOutDown 0.5s both ease-in;
+  -moz-animation: slideOutDown 0.5s both ease-in;
+  -o-animation: slideOutDown 0.5s both ease-in;
+  z-index: 9999;
+}
