@@ -15,17 +15,19 @@
       $routeProvider
       .when('/', {
         templateUrl: '/static/interests/templates/home.html',
-        controller: 'HomeController'
+        controller: 'HomeController',
+        controllerAs: 'homeCtrl'
       })
       .when('/interests/list',{
         templateUrl: '/static/interests/templates/list.html',
-        controller: 'ListController'
+        controller: 'ListController',
+        controllerAs: 'listCtrl'
       })
       .when('/about', {
         templateUrl: '/static/sitepages/templates/about.html'
       })
       .otherwise({
-        redirectTo: '/static/interests/templates/home.html'
+        redirectTo: '/'
       });
   }]);
 

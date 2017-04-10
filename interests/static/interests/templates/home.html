@@ -1,6 +1,4 @@
-<div ng-controller="HomeController as homeCtrl">
-
-  <div class="dropdown">
+  <!-- <div class="dropdown">
     <a href="#" data-toggle="dropdown" class="dropdown-toggle">
       <b>hmmm</b> <span class="caret"></span>
     </a>
@@ -48,7 +46,38 @@
   <blockquote>
     <i>No results found</i>
     <br>
-  </blockquote>
+  </blockquote> -->
+
+
+<div class="row">
+
+  <span ng-repeat="interest in userInterests">
+    <h1> {{ interest.title }} </h1>
+    <hr width="80%">
+    <span class="text-muted">
+      <span class="glyphicon glyphicon-time"></span>
+      Updated on {{ interest.last_refreshed | date }}
+    </span>
+    <br><br>
+
+    <div class="col-sm-6 col-md-4" ng-repeat="article in interest.articles">
+      <div class="thumbnail">
+        <img src="{{ article.top_img }}" alt="Image for article {{ article.id }}">
+        <div class="caption">
+          <h3>{{ article.title | cleanText }}</h3>
+          <p>
+            {{ article.description | limitTo: 150 | cleanText }}...
+          </p>
+          <p>
+            <a href="{{ article.link }}" class="btn btn-primary" role="button">
+              Read On
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </span>
 
 </div>
 
