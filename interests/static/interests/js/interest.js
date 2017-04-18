@@ -5,6 +5,12 @@
   var app = angular.module('interest', []);
   var apiBase = '/api/v1';
 
+  // app.config(['$httpProvider', function($httpProvider) {
+  //   $httpProvider.defaults.headers.patch = {
+  //       'Content-Type': 'application/json;charset=utf-8'
+  //   };
+  // }]);
+
   app.factory('userFactory', ['$http', function($http){
     var promise = null;
     var userFactory = {};
@@ -13,8 +19,12 @@
       return $http.get(apiBase + '/user/' + user_id + '/?format=json');
     };
 
-    userFactory.getUserProfile = function(profileid){
-      return $http.get(apiBase + '/user_profile/' + profileid + '/?format=json');
+    userFactory.getUserProfile = function(profile_id){
+      return $http.get(apiBase + '/user_profile/' + profile_id + '/?format=json');
+    };
+
+    userFactory.importInterest = function(data_obj, profile_id){
+      return $http.patch(apiBase + '/user_profile/' + profile_id + '/', data_obj);
     };
 
     return userFactory;
@@ -31,15 +41,19 @@
       return $http.get(uri + '?format=json');
     };
 
-    interestFactory.buildInterestArray = function(arr){
+    interestFactory.getInterestById = function(id){
+      return $http.get(apiBase + '/interest/' + id + '/?format=json');
+    };
 
+    interestFactory.updateInterest = function(id, data_obj){
+      return $http.patch(apiBase + '/interest/' + id + '/', data_obj);
     };
 
     return interestFactory;
   }]);
 
 
-  app.controller('ListController', ['$http', '$log', '$scope', 'interestFactory', function($http, $log, $scope, interestFactory){
+  app.controller('ListController', ['$http', '$log', '$scope', 'interestFactory', 'userFactory', function($http, $log, $scope, interestFactory, userFactory){
     this.sortType = 'imports';
     this.sortReverse = false;
     this.searchInterests = '';
@@ -57,10 +71,70 @@
       this.sortReverse = !this.sortReverse;
     };
 
+    this.import = function(int_id){
+      var profile_id = 0;
+      var user_interests = [];
+
+      // Get the user's user profile ID to start the process
+      userFactory.getUser($scope.uid).then(function(response){
+        $log.info(response.data.profile.id);
+        profile_id = response.data.profile.id;
+        getProfileInterests(profile_id);
+      });
+
+      // Use user profile to get user's current list of Interests
+      function getProfileInterests(profile_id){
+        userFactory.getUserProfile(profile_id).then(function(response){
+          user_interests = response.data.interests;
+          addToInterests(user_interests);
+        });
+      }
+
+      // Add the importing Interest to the array of current interests for user
+      function addToInterests(user_interests){
+        interestFactory.getInterestById(int_id).then(function(response){
+          user_interests.push(response.data.resource_uri);
+          var news_result = response.data.news_result;
+          var num_imports = response.data.num_of_imports;
+          num_imports += 1;
+          sendToPatch(user_interests, profile_id, num_imports, news_result);
+        });
+      }
+
+      // Contstruct an interests obj to send off to API to PATCH "interests" in profile with new interest
+      function sendToPatch(user_interests, profile_id, num_imports, newsresult){
+        var dataObj = {
+          interests: user_interests
+        }
+        var intObj = {
+          news_result: newsresult,
+          num_of_imports: num_imports
+        }
+        // userFactory.importInterest(dataObj, profile_id).then(function(response){
+        //   $log.info('IMPORT SUCCESS');
+        // });
+        interestFactory.updateInterest(int_id, intObj).then(function(response){
+          $log.info('# Imports updated')
+        });
+      }
+    };
+
+    this.isOwned = function(interest_uri){
+      if ($scope.userOwnedInterests.indexOf(interest_uri) != -1){
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     $scope.interests = [];
     interestFactory.getAllInterests().then(function(response){
       $scope.interests = response.data.objects;
-      // $log.info($scope.interests);
+    });
+
+    $scope.userOwnedInterests = [];
+    userFactory.getUser($scope.uid).then(function(response){
+      $scope.userOwnedInterests = response.data.profile.interests;
     });
   }]);
 
@@ -75,11 +149,11 @@
       buildInterestArray();
     });
 
+    // Build the Array of attributes for each Interest to display in the home page
     function buildInterestArray() {
       var len = $scope.userInterestRes.length;
       for (var i = 0; i < len; i++){
         interestFactory.getInterest($scope.userInterestRes[i]).then(function(response){
-          $log.info(response.data.news_result.news_items);
           $scope.userInterests.push({
             id: response.data.id,
             title: response.data.title,

@@ -69,15 +69,15 @@
           </td>
 
           <!-- Import Button cell -->
+          <!--
+            TODO: AREA FOR FUTURE OPTIMIZATION: CACHE isOwned
+          -->
           <td>
-            <form name="interestImport" method="POST">
-              <input type="hidden" value="{{ i.id }}" ng-model="interest_id">
-              <button type="submit" ng-init="disabled = false" class="btn btn-primary btn-xs" ng-class="{ 'btn-success': disabled }" ng-click="disabled=true; listCtrl.importInterest()" ng-disabled="disabled">
-                 <span class="glyphicon glyphicon-import" ng-show="!disabled"></span>
-                 <span class="glyphicon glyphicon-ok" ng-show="disabled"></span>
-                 {{disabled && ' Imported' || ' Import'}}
-              </button>
-            </form>
+            <button type="submit" ng-init="disabled = false" class="btn btn-primary btn-xs" ng-class="{ 'btn-success': disabled || listCtrl.isOwned(i.resource_uri) }" ng-click="disabled=true; listCtrl.import(i.id)" ng-disabled="disabled||listCtrl.isOwned(i.resource_uri)">
+               <span class="glyphicon glyphicon-import" ng-show="!disabled" ng-hide="listCtrl.isOwned(i.resource_uri)"></span>
+               <span class="glyphicon glyphicon-ok" ng-show="disabled || listCtrl.isOwned(i.resource_uri)"></span>
+               {{ (disabled || listCtrl.isOwned(i.resource_uri)) && ' Imported' || ' Import' }}
+            </button>
           </td>
 
         </tr>

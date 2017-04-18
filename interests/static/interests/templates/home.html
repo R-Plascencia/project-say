@@ -49,10 +49,10 @@
   </blockquote> -->
 
 
-<div class="row">
+<div class="row" ng-repeat="interest in userInterests">
 
-  <span ng-repeat="interest in userInterests">
     <div class="dropdown">
+
       <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration:none;color:inherit;">
         <h1>
           {{ interest.title }}
@@ -95,7 +95,7 @@
             {{ article.description | limitTo: 150 | cleanText }}...
           </p>
           <p>
-            <a href="{{ article.link }}" class="btn btn-primary" role="button">
+            <a target="_blank" href="{{ article.link }}" class="btn btn-primary" role="button">
               Read On
             </a>
           </p>
@@ -103,8 +103,7 @@
       </div>
     </div>
 
-  </span>
-
+  <br><br>
 </div>
 
 <!-- FETCHING KNOWLEDGE -->

@@ -12,6 +12,6 @@ class InterestResource(ModelResource):
     class Meta:
         queryset = Interest.objects.all()
         resource_name = 'interest'
-        allowed_methods = ['get', 'post']
+        allowed_methods = ['get', 'post', 'patch']
         always_return_data = True
         authorization = Authorization()
