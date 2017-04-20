@@ -11,6 +11,14 @@
   //   };
   // }]);
 
+  app.config(function($httpProvider) {
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+  });
+
+  /**
+    Factory for all user-related async $http operations
+  */
   app.factory('userFactory', ['$http', function($http){
     var promise = null;
     var userFactory = {};
@@ -30,6 +38,9 @@
     return userFactory;
   }]);
 
+  /**
+    Factory for all async $http interest-related operations
+  */
   app.factory('interestFactory', ['$http', function($http){
     var interestFactory = {};
 
@@ -48,6 +59,14 @@
     interestFactory.updateInterest = function(id, data_obj){
       return $http.patch(apiBase + '/interest/' + id + '/', data_obj);
     };
+
+    interestFactory.refreshInterest = function(id){
+      return $http.post('/interests/' + id + '/refresh');
+    }
+
+    interestFactory.removeInterest = function(id){
+      return $http.post('/interests/' + id + '/remove');
+    }
 
     return interestFactory;
   }]);
@@ -75,14 +94,18 @@
       var profile_id = 0;
       var user_interests = [];
 
-      // Get the user's user profile ID to start the process
+      /**
+       Get the user's user profile ID to start the process
+       */
       userFactory.getUser($scope.uid).then(function(response){
         $log.info(response.data.profile.id);
         profile_id = response.data.profile.id;
         getProfileInterests(profile_id);
       });
 
-      // Use user profile to get user's current list of Interests
+      /**
+        Use user profile to get user's current list of Interests
+      */
       function getProfileInterests(profile_id){
         userFactory.getUserProfile(profile_id).then(function(response){
           user_interests = response.data.interests;
@@ -90,7 +113,9 @@
         });
       }
 
-      // Add the importing Interest to the array of current interests for user
+      /**
+       Add the importing Interest to the array of current interests for user
+       */
       function addToInterests(user_interests){
         interestFactory.getInterestById(int_id).then(function(response){
           user_interests.push(response.data.resource_uri);
@@ -101,7 +126,9 @@
         });
       }
 
-      // Contstruct an interests obj to send off to API to PATCH "interests" in profile with new interest
+      /**
+       Contstruct an interests obj to send off to API to PATCH "interests" in profile with new interest
+       */
       function sendToPatch(user_interests, profile_id, num_imports, newsresult){
         var dataObj = {
           interests: user_interests
@@ -139,9 +166,29 @@
   }]);
 
 
-  app.controller('HomeController', ['$http', '$log', '$scope', 'userFactory', 'interestFactory', function($http, $log, $scope, userFactory, interestFactory){
+  app.controller('HomeController', ['$http', '$log', '$scope', '$route', 'userFactory', 'interestFactory', function($http, $log, $scope, $route, userFactory, interestFactory){
+    this.refresh = function(interestId){
+      interestFactory.refreshInterest(interestId).then(function(response){
+        $log.info('Refreshed interest ' + interestId);
+
+        // jQuery to get rid of "Fetching Knowledge" modal right before refresh. Otherwise static backdrop gets stuck
+        $('#fetchingModal').toggle();
+        $('.modal-backdrop').remove();
+
+        // Reload the route template only
+        $route.reload();
+      });
+    }
+
+    this.remove = function(interestId){
+      interestFactory.removeInterest(interestId).then(function(response){
+        $log.info('Removing interest ' + interestId);
+        $route.reload();
+      });
+    }
+
     $scope.userInterestRes = [];  // Array of interest resource URIs
-    $scope.userInterests = [];
+    $scope.userInterests = [];  // Array of interst objects belonging to user
 
     userFactory.getUser($scope.uid).then(function(response){
       $scope.userInterestRes = response.data.profile.interests;
@@ -149,7 +196,9 @@
       buildInterestArray();
     });
 
-    // Build the Array of attributes for each Interest to display in the home page
+    /**
+      Build the Array of attributes for each Interest to display in the home page
+    */
     function buildInterestArray() {
       var len = $scope.userInterestRes.length;
       for (var i = 0; i < len; i++){
@@ -167,6 +216,9 @@
     }
   }]);
 
+  /**
+   Removes things like '&quot', '&apos' and other such codes for characters in page text
+  */
   app.filter('cleanText', function(){
     return function(text){
       if (typeof text != 'string'){

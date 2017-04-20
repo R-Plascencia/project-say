@@ -67,7 +67,7 @@ def remove(request, pk):
     if request.method == 'POST':
         interest = Interest.objects.get(pk=pk)
         request.user.profile.interests.remove(interest)
-        interest.delete()
+        # interest.delete()
         return redirect('index')
 
 def list(request):

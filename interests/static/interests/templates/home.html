@@ -60,20 +60,22 @@
       </a>
       <ul class="dropdown-menu" role="menu">
           <li>
-            <a class="refresh-button" ng-click="document.getElementById('refresh-form{{interest.id}}').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
-              <span class="glyphicon glyphicon-refresh" style="color:green;"></span> Refresh
+            <a class="refresh-button" ng-click="homeCtrl.refresh(interest.id)" title="Update results" data-toggle="modal" data-target="#fetchingModal">
+              <span class="glyphicon glyphicon-refresh" style="color:green;"></span>
+              Refresh
             </a>
-            <form id="refresh-form{{interest.id}}" method="POST" action="">
+            <!-- <form id="refresh-form{{interest.id}}" method="POST" ng-submit="homeCtrl.refresh(interest.id)">
               <input type="hidden" value="refresh">
-            </form>
+            </form> -->
           </li>
           <li>
-            <a href="#" class="deletebtn" ng-click="document.getElementById('delete-form{{interest.id}}').submit()" title="Delete Interest">
-              <span class="glyphicon glyphicon-trash" style="color:red;"></span> Delete
+            <a href="#" class="deletebtn" ng-click="homeCtrl.remove(interest.id)" title="Delete Interest">
+              <span class="glyphicon glyphicon-trash" style="color:red;"></span>
+              Remove
             </a>
-            <form id="delete-form{{interest.id}}" method="POST" action="">
+            <!-- <form id="delete-form{{interest.id}}" method="POST" action="">
               <input type="hidden" value="delete">
-            </form>
+            </form> -->
           </li>
       </ul>
     </div>
@@ -107,19 +109,20 @@
 </div>
 
 <!-- FETCHING KNOWLEDGE -->
-<!-- <div id="fetchingModal" class="modal fade">
-  <div class="modal-dialog"> -->
+<div id="fetchingModal" class="modal fade">
+  <div class="modal-dialog">
 
     <!-- Modal content-->
-    <!-- <div class="modal-content">
+    <div class="modal-content">
       <div class="modal-body">
         <h4 class="modal-title">
           <center>
-            <i class="fa fa-refresh fa-spin" style="font-size:24px"></i> Fetching Knowledge...
+            <i class="fa fa-refresh fa-spin" style="font-size:24px;padding:5px;"></i>
+            Fetching New Knowledge...
           </center>
         </h4>
       </div>
 
     </div>
   </div>
-</div> -->
+</div>
