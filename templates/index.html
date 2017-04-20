@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Custom CSS for sidebar -->
-    <link href="{% static 'accounts/css/simple-sidebar.css' %}" rel="stylesheet">
+    <link href="{% static 'accounts/css/index.css' %}" rel="stylesheet">
 
     <!-- Styling for List template -->
     <link rel="stylesheet" href="{% static 'interests/css/liststyle.css' %}">
@@ -44,7 +44,7 @@
         <!-- Sidebar -->
         <div id="sidebar-wrapper" id="mynav" ng-controller="SidebarController as sideCtrl">
           <center>
-            <a class="sidebar-brand">
+            <a href="/" class="sidebar-brand">
                 <img alt="Brand" src="{% static 'interests/say-topicon3.png' %}" height="155" style="padding-top: 7px;">
             </a>
           </center>
