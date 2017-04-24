@@ -1,85 +1,112 @@
+  <!-- <div class="dropdown">
+    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
+      <b>hmmm</b> <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li>
+          <a class="refresh-button" ng-click="document.getElementById('refresh-form{{u_interest.id}}').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
+            <span class="glyphicon glyphicon-refresh" style="color:green;"></span> Refresh
+          </a>
+          <form id="refresh-form{{u_interest.id}}" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
 
-<br>
+            <input type="hidden" value="refresh">
+          </form>
+        </li>
+        <li>
+          <a href="#" class="deletebtn" ng-click="document.getElementById('delete-form{{u_interest.id}}').submit()" title="Delete Interest">
+            <span class="glyphicon glyphicon-minus-sign" style="color:red;"></span> Delete
+          </a>
+          <form id="delete-form{{u_interest.id}}" method="POST" action="{% url 'interests:remove' u_interest.id %}">
 
-{% if user.is_authenticated %}
-  {% for u_interest in user.profile.interests.all %}
-  <div class="panel panel-default">
-    <div class="panel-heading">
+            <input type="hidden" value="delete">
+          </form>
+        </li>
+    </ul>
+  </div>
 
-      <div class="dropdown">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-          <b>{{ u_interest }}</b> <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-            <li>
-              <a class="refresh-button" onClick="document.getElementById('refresh-form{{u_interest.id}}').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
-                <span class="glyphicon glyphicon-refresh" style="color:green;"></span> Refresh
-              </a>
-              <form id="refresh-form{{u_interest.id}}" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
-                {% csrf_token %}
-                <input type="hidden" value="refresh">
-              </form>
-            </li>
-            <li>
-              <a href="#" class="deletebtn" onClick="document.getElementById('delete-form{{u_interest.id}}').submit()" title="Delete Interest">
-                <span class="glyphicon glyphicon-minus-sign" style="color:red;"></span> Delete
-              </a>
-              <form id="delete-form{{u_interest.id}}" method="POST" action="{% url 'interests:remove' u_interest.id %}">
-                {% csrf_token %}
-                <input type="hidden" value="delete">
-              </form>
-            </li>
-        </ul>
+  <h6>
+    <span class="text-muted">
+      <span class="glyphicon glyphicon-time"></span>
+      Updated on {{ h.last_refreshed }}
+    </span>
+  </h6>
+
+  <div class="row">
+    <div class="col-sm-6 col-md-4">
+      <div class="thumbnail">
+
+        <div class="caption">
+
+          <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+        </div>
       </div>
     </div>
-    <div class="panel-body">
-      <h6>
-        <span class="text-muted">
-          <span class="glyphicon glyphicon-time"></span>
-          Updated on {{ u_interest.last_refreshed }}
-        </span>
-      </h6>
+  </div>
 
-      {% if u_interest.newsresults.newsitems.all %}
-        {% for r in u_interest.newsresults.newsitems.all %}<br>
-        <div class="row">
-          <div class="col-sm-6 col-md-4">
-            <div class="thumbnail">
-              <img src="{{r.top_img}}" alt="top">
-              <div class="caption">
-                <h3>{{r}}</h3>
-                <p>{{r.description}}</p>
-                <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      {% else %}
-        <blockquote>
-          <i>No results found</i>
-          <br>
-        </blockquote>
-      {% endif %}
-    <!-- END PANEL BODY -->
+  <blockquote>
+    <i>No results found</i>
+    <br>
+  </blockquote> -->
+
+
+<div class="row" ng-repeat="interest in userInterests">
+
+    <div class="dropdown">
+
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration:none;color:inherit;">
+        <h1>
+          {{ interest.title }}
+        </h1>
+      </a>
+      <ul class="dropdown-menu" role="menu">
+          <li>
+            <a class="refresh-button" ng-click="homeCtrl.refresh(interest.id)" title="Update results" data-toggle="modal" data-target="#fetchingModal">
+              <span class="glyphicon glyphicon-refresh" style="color:green;"></span>
+              Refresh
+            </a>
+            <!-- <form id="refresh-form{{interest.id}}" method="POST" ng-submit="homeCtrl.refresh(interest.id)">
+              <input type="hidden" value="refresh">
+            </form> -->
+          </li>
+          <li>
+            <a href="#" class="deletebtn" ng-click="homeCtrl.remove(interest.id)" title="Delete Interest">
+              <span class="glyphicon glyphicon-trash" style="color:red;"></span>
+              Remove
+            </a>
+            <!-- <form id="delete-form{{interest.id}}" method="POST" action="">
+              <input type="hidden" value="delete">
+            </form> -->
+          </li>
+      </ul>
     </div>
-  <!-- END PANEL -->
-  </div>
 
-  {% endfor %}
+    <hr width="80%">
+    <span class="text-muted">
+      <span class="glyphicon glyphicon-time"></span>
+      Updated on {{ interest.last_refreshed | date }}
+    </span>
 
-{% else %}
-  <div class="jumbotron">
-  <h2>Say: Your Truthful News Fetcher</h2>
-  <br>
-  <p class="jumbo">In today's politics, it can sometimes be hard to know if the news you're reading is reliable.
-  That's where Say comes in! Create an Interest with a few related keywords of what you're
-  'interested' in, and you'll get back news articles from reputable and respected sources! No sifting, wading, or
-  searching necessary.</p>
-  <br>
-  <p><a class="btn btn-primary btn-lg" href="{% url 'accounts:register' %}" role="button">Get Started!</a></p>
-  </div>
-{% endif %}
+    <br><br>
+
+    <div class="col-sm-6 col-md-4" ng-repeat="article in interest.articles">
+      <div class="thumbnail">
+        <img src="{{ article.top_img }}" alt="Image for article {{ article.id }}">
+        <div class="caption">
+          <h3>{{ article.title | cleanText }}</h3>
+          <p>
+            {{ article.description | limitTo: 150 | cleanText }}...
+          </p>
+          <p>
+            <a target="_blank" href="{{ article.link }}" class="btn btn-primary" role="button">
+              Read On
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  <br><br>
+</div>
 
 <!-- FETCHING KNOWLEDGE -->
 <div id="fetchingModal" class="modal fade">
@@ -90,7 +117,8 @@
       <div class="modal-body">
         <h4 class="modal-title">
           <center>
-            <i class="fa fa-refresh fa-spin" style="font-size:24px"></i> Fetching Knowledge...
+            <i class="fa fa-refresh fa-spin" style="font-size:24px;padding:5px;"></i>
+            Fetching New Knowledge...
           </center>
         </h4>
       </div>
@@ -98,94 +126,3 @@
     </div>
   </div>
 </div>
-
-<!-- CREATE AN INTEREST MODAL -->
-<!-- {% verbatim %}
-<div id="createInterestModal" class="modal fade" ng-app="interestApp" data-backdrop="{{ createCtrl.btnClicked ? 'static' : 'true' }}">
-{% endverbatim %}
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <!-- <div class="modal-content" ng-controller="CreationController as createCtrl">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" ng-hide="createCtrl.btnClicked">&times;</button>
-        <h4 class="modal-title">
-          Create An Interest
-        </h4>
-      </div>
-      <div class="modal-body">
-        <!-- <div class="alert alert-dismissible alert-danger fade in">
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-          <strong>Oh snap!</strong> <a href="#" class="alert-link">Change a few things up</a> and try submitting again.
-        </div> -->
-
-        <br>
-        <!-- FORM nesting not allowed?? -->
-        <form name="createForm" method="POST" action="{% url 'interests:create' %}" novalidate>
-          {% csrf_token %}
-          <div class="form-group" id="title_div">
-            <label for="title">Title:</label>
-            <input ng-model="interest.title" type="text" class="form-control" name="title" id="title" required autofocus="">
-          </div>
-          <form class="form-inline">
-            <div class="form-group" id="keywords_div">
-              <label for="keywords">Keywords (Maximum of 4):</label>
-              <input ng-model="interest.keywords" type="text" class="form-control" aria-describedby="keyword-helptext" name="keywords" id="keywords" ng-pattern="/^\w([^,]*,){0,3}[^,]*$/" required>
-              <p id="keyword-helptext" class="form-text text-muted">
-                Keywords must be comma-separated
-                <a href="#" data-toggle="modal" data-target="#helpModal" title="Help">
-                  <span class="glyphicon glyphicon-question-sign"></span>
-                </a>
-              </p>
-            </div>
-            <br>
-            <button ng-disabled="createForm.$invalid" ng-click="createCtrl.btnClicked = !createCtrl.btnClicked" type="submit" class="btn btn-primary btn-info btn-lg btn-block" id="createbutton" data-toggle="modal" data-target="#creatingModal">
-              <span class="glyphicon glyphicon-plus" ng-hide="createCtrl.btnClicked"></span>
-              <i class="fa fa-circle-o-notch fa-spin" ng-show="createCtrl.btnClicked"></i>
-              {% verbatim %} {{createCtrl.btnClicked && 'Creating Interest...' || 'Create'}}  {% endverbatim %}
-            </button>
-          </form>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- HELP Modal -->
-<!-- <div id="helpModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <!-- <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">
-          <span class="glyphicon glyphicon-question-sign"></span> Help with Interest keywords
-        </h4>
-      </div>
-      <div class="modal-body">
-        <p>Keywords are words which describe the type of information you are looking for by using words which you would want to see
-          in that information. (It could contain one or all of the provided keywords).
-        </p>
-        <p>
-          An example of separate keywords for the interest "Election 2016": <br>
-          <b>
-            election, trump, hillary
-          </b>
-        </p>
-        <p>
-          You can also use short phrases as keywords. For example if you want to use "national security" as a keyword, then it must
-          be entered togther without a comma in between the words.
-        </p>
-        <p>
-          For example:<br>
-          <b>
-            national security, NSA, McMaster
-          </b>
-        </p>
-      </div>
-    </div>
-
-  </div>
-</div> -->
