@@ -13,7 +13,7 @@
 
     {% load static %}
     <!-- IE10 Viewport Bug Workaround -->
-    <link href="{% static 'interests/css/ie10-viewport-bug-workaround.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'interests/css/ie10-viewport-bug-workaround.css' %}">
 
     <!-- Flatly Bootstrap Theme -->
     <link rel="stylesheet" href="https://bootswatch.com/flatly/bootstrap.min.css" crossorigin="anonymous">
@@ -21,14 +21,14 @@
     <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Custom CSS for sidebar -->
-    <link href="{% static 'accounts/css/index.css' %}" rel="stylesheet">
-
-    <!-- Styling for List template -->
+    <!-- CSS for List template -->
     <link rel="stylesheet" href="{% static 'interests/css/liststyle.css' %}">
 
     <!-- CSS for Home page tab -->
     <link rel="stylesheet" href="{% static 'interests/css/home.css' %}">
+
+    <!-- CSS for general -->
+    <link rel="stylesheet" href="{% static 'accounts/css/index.css' %}">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,22 +39,22 @@
     <base href="/">
 </head>
 <body ng-init="uid = {{ user.id }}">
-    <div id="wrapper" class="toggled">
+    <div id="wrapper" class>
 
         <!-- Sidebar -->
-        <div id="sidebar-wrapper" id="mynav" ng-controller="SidebarController as sideCtrl">
+        <div id="sidebar-wrapper" class="say-sidenav" role="navigation" ng-controller="SidebarController as sideCtrl">
           <center>
             <a href="/" class="sidebar-brand">
                 <img alt="Brand" src="{% static 'interests/say-topicon3.png' %}" height="155" style="padding-top: 7px;">
             </a>
           </center>
-          <div class="navbar-header">
+          <!-- <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mynav">
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-          </div>
+          </div> -->
           <ul class="nav sidebar-nav">
             <li class="dropdown">
               <a href="#" id="userDrop" class="dropdown-toggle" data-toggle="collapse" data-target="#userMenu" role="button" aria-expanded="false" ng-click="sideCtrl.toggleUser = !sideCtrl.toggleUser">
@@ -134,14 +134,17 @@
 
         <!-- Page Content -->
         <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                  <!-- CONTROL WITH NG ROUTE -->
-                    <div class="col-lg-12" ng-view>
+          <a class="btn btn-default toggle-sidenav" id="menu-toggle">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+          </a>
+          <div class="container-fluid">
+            <div class="row">
+              <!-- CONTROL WITH NG ROUTE -->
+              <div class="col-lg-12" ng-view>
 
-                    </div>
-                </div>
+              </div>
             </div>
+          </div>
         </div>
         <!-- /#page-content-wrapper -->
 
@@ -174,6 +177,20 @@
 
     <!-- Quick blur for non-tab side links -->
     <script type="text/javascript">
+      if($(window).width() >= 755){
+        $("#wrapper").addClass("toggled");
+      } else {
+        $("#wrapper").removeClass("toggled");
+      }
+
+      $(window).on('resize', function() {
+        if($(window).width() >= 755) {
+          $("#wrapper").addClass("toggled");
+        } else {
+          $("#wrapper").removeClass("toggled");
+        }
+      })
+
       $("#userDrop").mouseup(function(){
         $(this).blur();
       });
@@ -182,6 +199,10 @@
       });
       $("#logoutBtn").mouseup(function(){
         $(this).blur();
+      });
+      $("#menu-toggle").click(function(e) {
+          e.preventDefault();
+          $("#wrapper").toggleClass("toggled");
       });
     </script>
 </body>
