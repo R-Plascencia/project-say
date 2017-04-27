@@ -6,6 +6,7 @@ django-angular==0.8.4
 django-tastypie==0.13.3
 feedfinder2==0.0.4
 feedparser==5.2.1
+gunicorn==19.7.1
 idna==2.2
 jieba3k==0.35.1
 lxml==3.7.2
