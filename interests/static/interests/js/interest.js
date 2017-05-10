@@ -239,7 +239,7 @@
       if (typeof text != 'string'){
         return text;
       } else {
-        text = text.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/b'/g, '');
+        text = text.replace(/&apos;/g, '\'').replace(/&quot;/g, '"').replace(/b'/g, '').replace(/\\xe2\\x80\\x94/g, '--');
         return text;
       }
     }

@@ -8,7 +8,7 @@ from django.dispatch import receiver
 # Create your models here.
 class Interest(models.Model):
     title = models.CharField(max_length=50)
-    keywords = models.CharField(max_length=100)
+    keywords = models.CharField()
     pub_date = models.DateTimeField()
     last_refreshed = models.DateTimeField(default=timezone.now())
     num_of_imports = models.IntegerField(default=1)
