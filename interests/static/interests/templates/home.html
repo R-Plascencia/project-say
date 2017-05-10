@@ -1,111 +1,64 @@
-  <!-- <div class="dropdown">
-    <a href="#" data-toggle="dropdown" class="dropdown-toggle">
-      <b>hmmm</b> <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-        <li>
-          <a class="refresh-button" ng-click="document.getElementById('refresh-form{{u_interest.id}}').submit()" title="Update results" data-toggle="modal" data-target="#fetchingModal">
-            <span class="glyphicon glyphicon-refresh" style="color:green;"></span> Refresh
-          </a>
-          <form id="refresh-form{{u_interest.id}}" method="POST" action="{% url 'interests:refresh' u_interest.id %}">
+<!-- Show only if the User has no interests. Set in interest.js => HomeController -->
+<blockquote ng-show="noInterests" id="no-results">
+    <b>Hello!</b> You do not have any Interests created. Create one using "Create Interests" or import a ready-made one from
+    the "Interests" page on the sidebar and get started on the road to knowlege!
+</blockquote>
 
+<div ng-repeat="interest in userInterests">
+  <div class="dropdown">
+    <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration:none;color:inherit;">
+      <h1>
+        {{ interest.title }}
+      </h1>
+    </a>
+    <ul class="dropdown-menu" role="menu">
+        <li>
+          <a class="refresh-button" ng-click="homeCtrl.refresh(interest.id)" title="Update results" data-toggle="modal" data-target="#fetchingModal">
+            <span class="glyphicon glyphicon-refresh" style="color:green;"></span>
+            Refresh
+          </a>
+          <!-- <form id="refresh-form{{interest.id}}" method="POST" ng-submit="homeCtrl.refresh(interest.id)">
             <input type="hidden" value="refresh">
-          </form>
+          </form> -->
         </li>
         <li>
-          <a href="#" class="deletebtn" ng-click="document.getElementById('delete-form{{u_interest.id}}').submit()" title="Delete Interest">
-            <span class="glyphicon glyphicon-minus-sign" style="color:red;"></span> Delete
+          <a href="#" class="deletebtn" ng-click="homeCtrl.remove(interest.id)" title="Delete Interest">
+            <span class="glyphicon glyphicon-trash" style="color:red;"></span>
+            Remove
           </a>
-          <form id="delete-form{{u_interest.id}}" method="POST" action="{% url 'interests:remove' u_interest.id %}">
-
+          <!-- <form id="delete-form{{interest.id}}" method="POST" action="">
             <input type="hidden" value="delete">
-          </form>
+          </form> -->
         </li>
     </ul>
   </div>
 
-  <h6>
-    <span class="text-muted">
-      <span class="glyphicon glyphicon-time"></span>
-      Updated on {{ h.last_refreshed }}
-    </span>
-  </h6>
+  <hr width="80%">
+  <span class="text-muted">
+    <span class="glyphicon glyphicon-time"></span>
+    Updated on {{ interest.last_refreshed | date }}
+  </span>
+  
+  <blockquote ng-show="interest.news_result === null">
+    <i>No results found for this Interest.</i>
+  </blockquote>
 
-  <div class="row">
-    <div class="col-sm-6 col-md-4">
-      <div class="thumbnail">
-
-        <div class="caption">
-
-          <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
-        </div>
-      </div>
+  <div class="media" ng-repeat="article in interest.articles">
+    <div class="media-left media-middle">
+      <a target="_blank" href="{{ article.link }}">
+        <img class="media-object" src="{{article.top_img}}" alt="Article Image" width="160" height="128">
+      </a>
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading">
+        <a target="_blank" href="{{ article.link }}">
+          {{ article.title | cleanText }}
+        </a>
+      </h4>
+        {{ article.description | limitTo: 175 | cleanText }}...
     </div>
   </div>
-
-  <blockquote>
-    <i>No results found</i>
-    <br>
-  </blockquote> -->
-
-
-<div class="row" ng-repeat="interest in userInterests">
-
-    <div class="dropdown">
-
-      <a href="#" data-toggle="dropdown" class="dropdown-toggle" style="text-decoration:none;color:inherit;">
-        <h1>
-          {{ interest.title }}
-        </h1>
-      </a>
-      <ul class="dropdown-menu" role="menu">
-          <li>
-            <a class="refresh-button" ng-click="homeCtrl.refresh(interest.id)" title="Update results" data-toggle="modal" data-target="#fetchingModal">
-              <span class="glyphicon glyphicon-refresh" style="color:green;"></span>
-              Refresh
-            </a>
-            <!-- <form id="refresh-form{{interest.id}}" method="POST" ng-submit="homeCtrl.refresh(interest.id)">
-              <input type="hidden" value="refresh">
-            </form> -->
-          </li>
-          <li>
-            <a href="#" class="deletebtn" ng-click="homeCtrl.remove(interest.id)" title="Delete Interest">
-              <span class="glyphicon glyphicon-trash" style="color:red;"></span>
-              Remove
-            </a>
-            <!-- <form id="delete-form{{interest.id}}" method="POST" action="">
-              <input type="hidden" value="delete">
-            </form> -->
-          </li>
-      </ul>
-    </div>
-
-    <hr width="80%">
-    <span class="text-muted">
-      <span class="glyphicon glyphicon-time"></span>
-      Updated on {{ interest.last_refreshed | date }}
-    </span>
-
-    <br><br>
-
-    <div class="col-sm-6 col-md-4" ng-repeat="article in interest.articles">
-      <div class="thumbnail">
-        <img src="{{ article.top_img }}" alt="Image for article {{ article.id }}">
-        <div class="caption">
-          <h3>{{ article.title | cleanText }}</h3>
-          <p>
-            {{ article.description | limitTo: 150 | cleanText }}...
-          </p>
-          <p>
-            <a target="_blank" href="{{ article.link }}" class="btn btn-primary" role="button">
-              Read On
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-
-  <br><br>
+  <br>
 </div>
 
 <!-- FETCHING KNOWLEDGE -->
@@ -126,3 +79,19 @@
     </div>
   </div>
 </div>
+
+<div id="page-loading" ng-hide="doneLoading">
+  <center>
+    <h3>
+      <i class="fa fa-circle-o-notch fa-spin"></i> Loading...
+    </h3>
+  </center>
+</div>
+
+<script type="text/javascript">
+  // document.addEventListener("DOMContentLoaded", function(event) {
+  //   var element = document.getElementById("page-loading");
+  //   element.parentNode.removeChild(element);
+  //   $('#page-loading').fadeOut('slow');
+  // });
+</script>

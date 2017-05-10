@@ -30,13 +30,14 @@
         redirectTo: '/'
       });
   }]);
-
-
-  // // Avoid Django and NG template tag collision
-  // app.config(function($interpolateProvider){
-  //   $interpolateProvider.startSymbol('{$');
-  //   $interpolateProvider.endSymbol('$}');
-  // });
+  app.run(['$templateCache', '$route', '$http', function($templateCache, $route, $http){
+    var url;
+    for (var i in $route.routes){
+      if (url = $route.routes[i].templateUrl){
+        $http.get(url, {cache: $templateCache});
+      }
+    }
+  }]);
 
   app.filter('anyInvalidDirtyFields', function () {
     return function(form) {

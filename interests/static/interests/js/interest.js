@@ -167,12 +167,13 @@
 
 
   app.controller('HomeController', ['$http', '$log', '$scope', '$route', 'userFactory', 'interestFactory', function($http, $log, $scope, $route, userFactory, interestFactory){
+
     this.refresh = function(interestId){
       interestFactory.refreshInterest(interestId).then(function(response){
         $log.info('Refreshed interest ' + interestId);
 
         // jQuery to get rid of "Fetching Knowledge" modal right before refresh. Otherwise static backdrop gets stuck
-        $('#fetchingModal').toggle();
+        $('#fetchingModal').modal('hide');
         $('.modal-backdrop').remove();
 
         // Reload the route template only
@@ -189,11 +190,20 @@
 
     $scope.userInterestRes = [];  // Array of interest resource URIs
     $scope.userInterests = [];  // Array of interst objects belonging to user
+    $scope.noInterests = false;
+    $scope.doneLoading = false;
 
-    userFactory.getUser($scope.uid).then(function(response){
+    userFactory.getUser($scope.uid)
+    .then(function(response){
       $scope.userInterestRes = response.data.profile.interests;
       $log.info('User interests ' + $scope.userInterestRes);
       buildInterestArray();
+    })
+    .finally(function(){
+      $scope.doneLoading = true;
+      if ($scope.userInterestRes.length == 0){
+        $scope.noInterests = true;
+      }
     });
 
     /**
@@ -203,12 +213,17 @@
       var len = $scope.userInterestRes.length;
       for (var i = 0; i < len; i++){
         interestFactory.getInterest($scope.userInterestRes[i]).then(function(response){
+          if (response.data.news_result == null){
+            newsArticles = '';
+          } else {
+            newsArticles = response.data.news_result.news_items;
+          }
           $scope.userInterests.push({
             id: response.data.id,
             title: response.data.title,
             last_refreshed: response.data.last_refreshed,
             news_result: response.data.news_result,
-            articles: response.data.news_result.news_items
+            articles: newsArticles
           });
 
         });

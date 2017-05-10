@@ -72,3 +72,7 @@ def remove(request, pk):
 
 def list(request):
     return render(request, 'index.html')
+
+def buildresults(request):
+    populate_newsitems()
+    return redirect('index')
