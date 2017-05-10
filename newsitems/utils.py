@@ -231,6 +231,10 @@ def populate_newsitems():
             news_item.pub_date = publish_date
             news_item.keywords = keywords_found
             news_item.save()
+            print("Newsitem {} saved".format(title))
+
+    # Not sure what else to return here, since seems like Celery tasks need to return something
+    # return True
 
 
 '''
@@ -295,77 +299,3 @@ def find_keywords(text, n=5):
             pass
 
     return topword_list
-
-'''
-Called from the Interest:Create view (for now). Takes the interest's keywords and searches each
-RSS source for word matches in their titles and desctiptions. If match is found, create NewsItem
-with the article's information and add to the 'results' dictionary. This will then be attached
-to the Interest's news results
-
-Returns: results - dictionary
-'''
-# def build_results(request, interest):
-#     results = NewsResult(interest=interest)
-#     result_found = False
-#
-#     # Get the keywords associated with Interest
-#     keywords = interest.keywords.split(',')
-#
-#     # Bring in the parsed feeds from each RSS source
-#     knowledge_sources = parse_rss_sources()
-#
-#     # Keep a list of what we're saving to avoid dups
-#     stories_saved = []
-#
-#     # For every source and its parsed entries
-#     for source, entries in knowledge_sources.items():
-#         # There are multiple stories in each "entry"
-#         for story in entries:
-#             description = story.description #.encode('utf-8')
-#             description = str(description)
-#             description = strip_tags(description)
-#             title = story.title
-#             link = story.link
-#
-#             # Use newspaper to parse the article into useful pieces
-#             article = Article(link)
-#             article.download()
-#             article.parse()
-#
-#             # Find the keywords in the article's text (or in the desc if somehow newspaper doesn't succeed
-#             # in getting the text back)
-#             if article.text == '' or article.text == None:
-#                 keywords_found = find_keywords(description)
-#             else:
-#                 text = article.text
-#                 keywords_found = find_keywords(str(text))
-#             # print(keywords_found)
-#
-#             # Search for the associated Interest keywords in the desctiptions and titles of every story
-#             for word in keywords:
-#                 word = word.strip().lower()
-#                 # If something is found, raise the flag
-#                 if word in keywords_found:
-#                     print("Found result {}".format(word))
-#                     result_found = True
-#
-#             # Before moving on to next thing, create a news item and add it to the results then reset flags
-#             if result_found:
-#                 interest.last_refreshed = timezone.now()
-#                 interest.save()
-#                 if title in stories_saved:
-#                     continue
-#                 else:
-#                     news_item = NewsItem()
-#                     news_item.title = title
-#                     news_item.link = link
-#                     news_item.descr = description
-#                     news_item.source = source
-#                     news_item.top_img = article.top_image
-#                     news_item.save()
-#                     results.save()
-#                     results.newsitems.add(news_item)
-#                     stories_saved.append(title)
-#                     results.save()
-#                     result_found = False
-#     return results
