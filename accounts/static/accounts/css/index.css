@@ -29,8 +29,9 @@
     width: 0;
     height: 100%;
     margin-left: -250px;
-    overflow-y: hidden;
-    overflow-x: hidden;
+    overflow-y: auto;
+    /*overflow-y: hidden;
+    overflow-x: hidden;*/
     background: #2c3e50; /*#000;*/
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
@@ -124,8 +125,15 @@ li a.active {
   cursor: pointer;
 }
 
-
 @media(min-width:768px) {
+
+    .toggle-sidenav {
+      display: none;
+    }
+
+    .say-sidenav {
+      display: inherit;
+    }
 
     #wrapper {
         padding-left: 0;
@@ -171,7 +179,7 @@ li a.active {
   -webkit-animation: fadeIn 0.5s both ease-in;
   -moz-animation: fadeIn 0.5s both ease-in;
   -o-animation: fadeIn 0.5s both ease-in;
-  z-index: 8888;
+  /*z-index: 8888;*/
 }
 
 .ng-leave {
@@ -179,5 +187,5 @@ li a.active {
   -webkit-animation: fadeOut 0.5s both ease-out;
   -moz-animation: fadeOut 0.5s both ease-out;
   -o-animation: fadeOut 0.5s both ease-out;
-  z-index: 9999;
+  /*z-index: 9999;*/
 }
