@@ -4,7 +4,7 @@ from django.utils import timezone
 
 # Create your models here.
 class NewsItem(models.Model):
-    title = models.CharField(max_length=100, unique=True)
+    title = models.CharField(unique=True)
     description = models.TextField()
     link = models.URLField(max_length=350)
     top_img = models.URLField(max_length=350, default='')
