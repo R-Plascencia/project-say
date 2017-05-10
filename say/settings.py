@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/1.10/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
-
+from __future__ import absolute_import, unicode_literals
 import os
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +26,7 @@ SECRET_KEY = 'i1lm!g=#mu1^hhv^*42jxbc@o0ix@6ve9ef%*+quz+fo^$pnbw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['project-say.herokuapp.com', 'localhost']
 
 
 # Application definition
@@ -42,7 +43,7 @@ INSTALLED_APPS = [
     'newsitems',
     'sitepages',
     'tastypie',
-    'djng',
+    'celery',
 ]
 
 MIDDLEWARE = [
@@ -120,12 +121,33 @@ USE_L10N = True
 USE_TZ = True
 
 
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.path.join(PROJECT_ROOT,'../say')
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-
-STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static')
+# PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-    '/var/www/static/',
-]
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+# STATICFILES_DIRS = [
+#     os.path.join(PROJECT_ROOT, "static/"),
+#     # '/var/www/static/',
+# ]
+
+'''
+CELERY STUFF
+'''
+# CELERY_BEAT_SCHEDULE = {
+#     # crontab(hour=0, minute=0, day_of_week='saturday')
+#     'get-new-articles': {  # example: 'file-backup'
+#         'task': 'newsitems.tasks.retrieve_new_articles',  # example: 'files.tasks.cleanup'
+#         'schedule': crontab(hour='*/1', minute=0)
+#     },
+# }
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
